@@ -19,14 +19,14 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: Build the Docker image
-        run: docker build -t backend/backend:latest .
+        run: docker build -t kedaiprogrammer/backend:latest .
 
       - name: Push the Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: backend/backend:latest
+          tags: kedaiprogrammer/backend:latest
 
       - name: SSH into VPS
         uses: appleboy/ssh-action@v0.1.6
@@ -36,10 +36,10 @@ jobs:
           password: Sukses@2023
 
       - name: Pull the Docker image
-        run: ssh kedaiprogrammer@${{ secrets.VPS_HOST }} "docker pull backend/backend:latest"
+        run: ssh kedaiprogrammer@${{ secrets.VPS_HOST }} "docker pull kedaiprogrammer/backend:latest"
 
       - name: Stop and remove the old container
         run: ssh kedaiprogrammer@${{ secrets.VPS_HOST }} "docker stop backend && docker rm backend || true"
 
       - name: Start the Docker container
-        run: ssh kedaiprogrammer@${{ secrets.VPS_HOST }} "docker run -d --name backend -p 8080:8080 -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_NAME=${{ secrets.DB_NAME }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} backend/backend:latest"
+        run: ssh kedaiprogrammer@${{ secrets.VPS_HOST }} "docker run -d --name backend -p 8080:8080 -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_NAME=${{ secrets.DB_NAME }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} kedaiprogrammer/backend:latest"
