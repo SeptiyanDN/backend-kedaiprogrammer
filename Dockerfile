@@ -36,4 +36,4 @@ ENV DB_PASSWORD=development
 EXPOSE 8080
 
 # Run the application
-CMD ["app/main", "--host", "0.0.0.0"]
+CMD ["./main", "--host", "0.0.0.0"]
