@@ -25,7 +25,6 @@ WORKDIR /app
 # Copy the built binary from the previous stage
 COPY --from=0 /app/main .
 
-# Set environment variables for database connection
 ENV DB_HOST=localhost
 ENV DB_PORT=5432
 ENV DB_NAME=kedaiprogrammer
