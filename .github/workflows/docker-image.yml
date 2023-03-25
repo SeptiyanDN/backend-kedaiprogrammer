@@ -39,7 +39,7 @@ jobs:
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
 
   Deployment-Projects:
-    needs: Build-And-Push-Docker-Images-CI
+    needs: build-and-push-docker-images
     environment: master
     runs-on: ubuntu-latest
     steps:
