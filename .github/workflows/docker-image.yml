@@ -10,23 +10,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      
+        uses: actions/checkout@v2
+
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Set up Docker Buildx 
-        uses: docker/setup-buildx-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
 
       - name: Build the Docker image Backend Project
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v2
         with:
           file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/backend:latest
+
+      - name: Login to Docker Hub for PostgreSQL
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+
+      - name: Build the Docker image PostgreSQL
+        uses: docker/build-push-action@v2
+        with:
+          file: ./docker/PostgreSQL/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/postgresql:latest
+
   Deployment-Projects:
     needs: Build-And-Push-Docker-Images-CI
     environment: master
@@ -42,7 +56,6 @@ jobs:
             docker stop backend || true
             docker rm backend || true
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/backend:latest
-            docker pull postgres
-            docker run -d --name postgres -e POSTGRES_USER=${{ secrets.DB_USER }} -e POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }} -e POSTGRES_DB=${{ secrets.DB_NAME }} postgresql:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/postgresql:latest
+            docker run -d --name postgres -e POSTGRES_USER=${{ secrets.DB_USER }} -e POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }} -e POSTGRES_DB=${{ secrets.DB_NAME }} ${{ secrets.DOCKER_HUB_USERNAME }}/postgresql:latest
             docker run -d --name backend -p 8080:8080 -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_NAME=${{ secrets.DB_NAME }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} kedaiprogrammer/backend:latest
-            
