@@ -1,23 +1,28 @@
-# Use an official Golang runtime as a parent image
 FROM golang:1.20
-FROM alpine:latest
 
-# Set the working directory to /app
-RUN apk add --no-cache postgresql-client
+# Set the current working directory inside the container
+WORKDIR /app
 
-WORKDIR /app/main
+# Copy the Go modules and install them
+COPY go.mod go.sum ./
+RUN go mod tidy
 
-# Copy the current directory contents into the container at /app
-COPY go.mod .
-COPY go.sum .
+# Copy the rest of the application code
+COPY . .
+
 # Build the application
 RUN go build -o main .
 
-RUN go mod tidy
+# Use a minimal image of Alpine for the final image
+FROM alpine:latest
 
-COPY . .
-RUN go build -o ./out/main .
+# Add PostgreSQL as a dependency
+RUN apk add --no-cache postgresql-client
 
+# Set the current working directory inside the container
+WORKDIR /app
+
+# Copy the built binary from the previous stage
 
 # Set environment variables for database connection
 ENV DB_HOST=localhost
@@ -30,4 +35,4 @@ ENV DB_PASSWORD=development
 EXPOSE 8080
 
 # Run the application
-CMD ["./out/main", "--host", "0.0.0.0"]
+CMD ["./main", "--host", "0.0.0.0"]
