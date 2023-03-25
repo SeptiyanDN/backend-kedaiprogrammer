@@ -36,10 +36,10 @@ jobs:
           password: ${{ secrets.VPS_PASSWORD }}
 
       - name: Pull the Docker image
-        run: ssh kedaiprogrammer@${{ secrets.SERVER_IP }} "docker pull backend/backend:latest"
+        run: ssh kedaiprogrammer@${{ secrets.VPS_HOST }} "docker pull backend/backend:latest"
 
       - name: Stop and remove the old container
-        run: ssh kedaiprogrammer@${{ secrets.SERVER_IP }} "docker stop backend && docker rm backend || true"
+        run: ssh kedaiprogrammer@${{ secrets.VPS_HOST }} "docker stop backend && docker rm backend || true"
 
       - name: Start the Docker container
-        run: ssh kedaiprogrammer@${{ secrets.SERVER_IP }} "docker run -d --name backend -p 8080:8080 -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_NAME=${{ secrets.DB_NAME }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} backend/backend:latest"
+        run: ssh kedaiprogrammer@${{ secrets.VPS_HOST }} "docker run -d --name backend -p 8080:8080 -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_NAME=${{ secrets.DB_NAME }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} backend/backend:latest"
