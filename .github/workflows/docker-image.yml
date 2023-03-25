@@ -27,7 +27,7 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_PASSWORD }}/backend:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/backend:latest
 
   Deployment-Projects:
     needs: Build-And-Push-Docker-Images-CI
