@@ -6,4 +6,4 @@ ENV POSTGRES_PASSWORD=development
 ENV POSTGRES_DB=kedaiprogrammer
 
 # Copy initialization script
-COPY init.sql /docker-entrypoint-initdb.d/
+COPY docker/init.sql /docker-entrypoint-initdb.d/
