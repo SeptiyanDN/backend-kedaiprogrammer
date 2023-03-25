@@ -38,5 +38,5 @@ jobs:
             docker stop backend || true
             docker rm backend || true
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/backend:latest
-            docker run -d -p 8080:8080 --name frontend kedaiprogrammer/backend:latest
+            docker run -d -p 8080:8080 --name backend kedaiprogrammer/backend:latest
             docker run -d --name backend -p 8080:8080 -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_NAME=${{ secrets.DB_NAME }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} kedaiprogrammer/backend:latest
