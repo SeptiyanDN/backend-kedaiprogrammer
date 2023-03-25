@@ -37,7 +37,7 @@ jobs:
       - name: Build the Docker image PostgreSQL
         uses: docker/build-push-action@v2
         with:
-          file: ./docker/PostgreSQL/Dockerfile
+          file: ./docker/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/postgresql:latest
 
