@@ -22,7 +22,6 @@ RUN apk add --no-cache postgresql-client
 # Set the current working directory inside the container
 WORKDIR /app
 
-# Copy the built binary from the previous stage
 COPY --from=0 /app/main .
 
 ENV DB_HOST=localhost
@@ -35,4 +34,4 @@ ENV DB_PASSWORD=development
 EXPOSE 8080
 
 # Run the application
-CMD ["./app/main", "--host", "0.0.0.0"]
+CMD ["/app/main", "--host", "0.0.0.0"]
