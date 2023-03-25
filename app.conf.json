@@ -1,0 +1,47 @@
+{
+    "appName": "Revamped Smart patrol API V1",
+    "baseUrl": "http://localhost:8033/",
+    "server": {
+        "port": 8033,
+        "readheadertimeout": 20,
+        "readtimeout": 60,
+        "writetimeout": 120,
+        "idletimeout": 90
+    },
+    "database_local": {
+        "host": "localhost",
+        "username": "postgres",
+        "name": "kedaiprogrammer",
+        "port": 5432,
+        "password": "development",
+        "max_idle_connection": 30,
+        "max_lifetime_connection": 30
+    },
+    "upload_path" : {
+        "logo":"assets/logo/",
+        "foto":"assets/foto/"
+    },
+    "redis_credentials" : {
+        "REDIS_URL" : "cudo.co.id:53947",
+        "REDIS_PASSWORD" :"revampsrb123!@#"
+    },
+    "SECRET" : {
+        "SECRET_KEY_JWT" : "SECRET_KEY_JWT_SUPERDUPERRAHASIA",
+        "SESSIONS_STORE" : "SMARTPATROL"
+    },
+    "S3_CREDENTIALS_" :{
+        "BUCKET" : "staging-smartpatrol",
+        "URL" :"is3.cloudhost.id",
+        "ACCESS_ID":"1DEX1YGLABAD4OCM8M43",
+        "SECRET_KEY" :"BckVxDudmAQGS2Lrx7sSxmv9BjwmGX3KAzo6nQtx",
+        "REGION" :"ap-southeast-3"
+    },
+    "S3_CREDENTIALS" :{
+        "BUCKET" : "staging-smartpatrol",
+        "URL" :"is3.cloudhost.id",
+        "ACCESS_ID":"1DEX1YGLABAD4OCM8M43",
+        "SECRET_KEY" :"BckVxDudmAQGS2Lrx7sSxmv9BjwmGX3KAzo6nQtx",
+        "REGION" :"id-jkt-1"
+    },
+    "path_asset_upload_excel" :"assets/excel/"
+}
