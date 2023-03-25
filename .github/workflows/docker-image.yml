@@ -21,14 +21,7 @@ jobs:
       - name: Set up Docker Buildx 
         uses: docker/setup-buildx-action@v2
 
-      - name: Build PostgreSQL image
-        uses: docker/build-push-action@v4
-        with:
-          file: ./Dockerfile.postgres
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/postgresql:latest
-
-      - name: Build the Docker image
+      - name: Build the Docker image Backend Project
         uses: docker/build-push-action@v4
         with:
           file: ./Dockerfile

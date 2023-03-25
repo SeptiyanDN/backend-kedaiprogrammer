@@ -1,10 +1,3 @@
-FROM postgres:latest
-ENV POSTGRES_USER=postgres
-ENV POSTGRES_PASSWORD=development
-ENV POSTGRES_DB=kedaiprogrammer
-
-COPY ./docker-entrypoint-initdb.d /docker-entrypoint-initdb.d/
-
 FROM alpine:latest
 RUN apk add --no-cache postgresql-client
 WORKDIR /app
