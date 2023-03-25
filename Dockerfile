@@ -1,4 +1,4 @@
-FROM postgres:latest as postgresql
+FROM postgres:latest
 ENV POSTGRES_USER=postgres
 ENV POSTGRES_PASSWORD=development
 ENV POSTGRES_DB=kedaiprogrammer
