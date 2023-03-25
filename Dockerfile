@@ -17,7 +17,7 @@ COPY . .
 RUN go build -o main .
 
 # Expose port 8080
-EXPOSE 3500
+EXPOSE 8080
 
 # Set environment variables
 ENV DB_HOST=localhost
