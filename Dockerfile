@@ -1,29 +1,28 @@
+# Use an official Golang runtime as a parent image
 FROM golang:1.20
 
-# Set the current working directory inside the container
+# Set the working directory to /app
 WORKDIR /app
 
-# Copy the Go modules and install them
-COPY go.mod go.sum ./
-RUN go mod tidy
-
-# Copy the rest of the application code
-COPY . .
+# Copy the current directory contents into the container at /app
+COPY . /app
 
 # Build the application
 RUN go build -o main .
 
-# Use a minimal image of Alpine for the final image
+# Use an official Alpine Linux runtime as a parent image
 FROM alpine:latest
 
 # Add PostgreSQL as a dependency
 RUN apk add --no-cache postgresql-client
 
-# Set the current working directory inside the container
+# Set the working directory to /app
 WORKDIR /app
 
+# Copy the binary from the previous stage
 COPY --from=0 /app/main .
 
+# Set environment variables for database connection
 ENV DB_HOST=localhost
 ENV DB_PORT=5432
 ENV DB_NAME=kedaiprogrammer
@@ -34,4 +33,4 @@ ENV DB_PASSWORD=development
 EXPOSE 8080
 
 # Run the application
-CMD ["/app/main", "--host", "0.0.0.0"]
+CMD ["./main", "--host", "0.0.0.0"]
