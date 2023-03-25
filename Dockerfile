@@ -1,5 +1,6 @@
 # Use an official Golang runtime as a parent image
 FROM golang:1.20
+FROM alpine:latest
 
 # Set the working directory to /app
 RUN apk add --no-cache postgresql-client
