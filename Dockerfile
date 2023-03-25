@@ -1,7 +1,7 @@
 FROM golang:1.20
 
 # Set the current working directory inside the container
-# WORKDIR /app
+WORKDIR /app
 
 # Copy the Go modules and install them
 COPY go.mod go.sum ./
@@ -20,10 +20,10 @@ FROM alpine:latest
 RUN apk add --no-cache postgresql-client
 
 # Set the current working directory inside the container
-# WORKDIR /app
+WORKDIR /app
 
 # Copy the built binary from the previous stage
-# COPY --from=0 /app/main .
+COPY /app/main .
 
 ENV DB_HOST=localhost
 ENV DB_PORT=5432
