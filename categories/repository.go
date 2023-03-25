@@ -2,9 +2,9 @@ package categories
 
 import (
 	"fmt"
+	"kedaiprogrammer/kedaihelpers"
 
 	"github.com/spf13/cast"
-	"gitlab.com/kedaiprogrammer/kedaihelpers"
 	"gorm.io/gorm"
 )
 

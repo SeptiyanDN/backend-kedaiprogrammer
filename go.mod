@@ -14,7 +14,6 @@ require (
 	github.com/spf13/cast v1.5.0
 	github.com/spf13/viper v1.15.0
 	github.com/xuri/excelize/v2 v2.7.0
-	gitlab.com/kedaiprogrammer/kedaihelpers v1.0.2
 	golang.org/x/crypto v0.7.0
 	gorm.io/driver/postgres v1.5.0
 	gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11

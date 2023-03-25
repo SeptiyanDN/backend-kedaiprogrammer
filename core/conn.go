@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"kedaiprogrammer/businesses"
+	"kedaiprogrammer/kedaihelpers"
 	"kedaiprogrammer/users"
 	"log"
 	"os"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/spf13/viper"
-	"gitlab.com/kedaiprogrammer/kedaihelpers"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
