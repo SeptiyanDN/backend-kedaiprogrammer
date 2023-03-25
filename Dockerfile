@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Copy the Go modules and install them
 COPY go.mod go.sum ./
-RUN go mod tidy
+# RUN go mod tidy
 
 # Copy the rest of the application code
 COPY . .
