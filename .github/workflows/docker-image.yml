@@ -21,6 +21,13 @@ jobs:
       - name: Set up Docker Buildx 
         uses: docker/setup-buildx-action@v2
 
+      - name: Build the PostgreSQL image
+        uses: docker/build-push-action@v4
+        with:
+          file: ./path/to/PostgreSQL/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/postgresql:latest
+
       - name: Build the Docker image
         uses: docker/build-push-action@v4
         with:
@@ -42,4 +49,6 @@ jobs:
             docker stop backend || true
             docker rm backend || true
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/backend:latest
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/postgresql:latest
+            docker run -d --name postgres -p 5432:5432 ${{ secrets.DOCKER_HUB_USERNAME }}/postgresql:latest
             docker run -d --name backend -p 8080:8080 -e DB_HOST=${{ secrets.DB_HOST }} -e DB_PORT=${{ secrets.DB_PORT }} -e DB_NAME=${{ secrets.DB_NAME }} -e DB_USER=${{ secrets.DB_USER }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} kedaiprogrammer/backend:latest

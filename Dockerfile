@@ -1,23 +1,22 @@
-# Use a minimal image of Alpine for the final image
+# Use the official PostgreSQL image as the base image
+FROM postgres:latest
+
+# Set environment variables for the database
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=development
+ENV POSTGRES_DB=kedaiprogrammer
+
+# Expose the PostgreSQL port
+EXPOSE 5432
+
 FROM alpine:latest
-
-# Add PostgreSQL as a dependency
 RUN apk add --no-cache postgresql-client
-
-# Set the current working directory inside the container
 WORKDIR /app
-
 FROM golang:1.20
-
-# Set the current working directory inside the container
 WORKDIR /app
-# Copy the rest of the application code
 COPY . .
-
 RUN go mod tidy
-
 RUN go build -o main .
-
 # Set environment variables for database connection
 ENV DB_HOST=localhost
 ENV DB_PORT=5432
