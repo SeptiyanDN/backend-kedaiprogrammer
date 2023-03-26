@@ -35,22 +35,21 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	initGorm.AutoMigrate(categories.Category{}, businesses.Business{}, users.User{})
 	dbs := core.DBConnect()
 	defer dbs.Dbx.Close()
 
 	router := gin.New()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:           []string{"https://septiyan.my.id"},
-		AllowMethods:           []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:           []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type"},
-		ExposeHeaders:          []string{"Content-Length"},
-		AllowCredentials:       true,
-		AllowAllOrigins:        true,
-		AllowWildcard:          true,
-		AllowBrowserExtensions: true,
-		MaxAge:                 12 * time.Hour,
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "https://septiyan.my.id"
+		},
+		MaxAge: 12 * time.Hour,
 	}))
 
 	router.Use(gin.Recovery())
