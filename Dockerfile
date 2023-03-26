@@ -19,4 +19,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Run the application
-CMD ["/app/main", "--host", "0.0.0.0"]
+CMD ["/app/main", "--host", "backend.septiyan.my.id"]
