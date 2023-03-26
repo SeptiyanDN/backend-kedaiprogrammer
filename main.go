@@ -50,10 +50,7 @@ func main() {
 		AllowAllOrigins:        true,
 		AllowWildcard:          true,
 		AllowBrowserExtensions: true,
-		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://septiyan.my.id"
-		},
-		MaxAge: 12 * time.Hour,
+		MaxAge:                 12 * time.Hour,
 	}))
 
 	router.Use(gin.Recovery())
