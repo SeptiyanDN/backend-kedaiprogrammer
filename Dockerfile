@@ -13,8 +13,10 @@ ENV DB_NAME=kedaiprogrammer
 ENV DB_USER=postgres
 ENV DB_PASSWORD=development
 
+ENV PORT=3500
+
 # Expose the application port
-EXPOSE 8080
+EXPOSE 3500
 
 # Run the application
 CMD ["/app/main", "--host", "0.0.0.0"]
