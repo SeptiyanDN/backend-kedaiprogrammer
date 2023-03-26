@@ -7,7 +7,7 @@ COPY . .
 RUN go mod tidy
 RUN go build -o main .
 # Set environment variables for database connection
-ENV DB_HOST=103.52.115.153
+ENV DB_HOST=54.169.58.48
 ENV DB_PORT=5432
 ENV DB_NAME=kedaiprogrammer
 ENV DB_USER=postgres
