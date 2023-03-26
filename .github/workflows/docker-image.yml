@@ -39,6 +39,7 @@ jobs:
           host: ${{ secrets.VPS_HOST }}
           username: kedaiprogrammer
           password: Sukses@2023
+          timeout: 60
           script: |
             docker stop backend || true
             docker rm backend || true
