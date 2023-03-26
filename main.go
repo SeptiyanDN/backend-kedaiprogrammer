@@ -53,6 +53,7 @@ func main() {
 	categoryHandler := handler.NewCategoryHandler(categoryServices)
 
 	router := gin.Default()
+
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
@@ -64,6 +65,22 @@ func main() {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
+	tmphttpreadheadertimeout, _ := time.ParseDuration(viper.GetString("server.readheadertimeout") + "s")
+	tmphttpreadtimeout, _ := time.ParseDuration(viper.GetString("server.readtimeout") + "s")
+	tmphttpwritetimeout, _ := time.ParseDuration(viper.GetString("server.writetimeout") + "s")
+	tmphttpidletimeout, _ := time.ParseDuration(viper.GetString("server.idletimeout") + "s")
+
+	s := &http.Server{
+		Addr:              ":" + viper.GetString("server.port"),
+		Handler:           router,
+		ReadHeaderTimeout: tmphttpreadheadertimeout,
+		ReadTimeout:       tmphttpreadtimeout,
+		WriteTimeout:      tmphttpwritetimeout,
+		IdleTimeout:       tmphttpidletimeout,
+		//MaxHeaderBytes:    1 << 20,
+	}
+	fmt.Println("🚀 Server running on port:", viper.GetString("server.port"))
+	s.ListenAndServe()
 
 	versioning := router.Group("/api/v1")
 
@@ -86,9 +103,6 @@ func main() {
 		categoryRouter.GET("/list", categoryHandler.GetAllCategory)
 		categoryRouter.GET("/:id", categoryHandler.GetDetailCategory)
 	}
-
-	router.Run("localhost:3500")
-	fmt.Println("🚀 Server running on port: 3500")
 
 }
 

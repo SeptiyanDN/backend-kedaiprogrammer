@@ -2,7 +2,7 @@
     "appName": "Revamped Smart patrol API V1",
     "baseUrl": "http://localhost:8033/",
     "server": {
-        "port": 8033,
+        "port": 8080,
         "readheadertimeout": 20,
         "readtimeout": 60,
         "writetimeout": 120,
