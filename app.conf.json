@@ -1,5 +1,5 @@
 {
-    "appName": "Revamped Smart patrol API V1",
+    "appName": "Kedai Programmer Indonesia API V1",
     "baseUrl": "http://localhost:8033/",
     "server": {
         "port": 8080,

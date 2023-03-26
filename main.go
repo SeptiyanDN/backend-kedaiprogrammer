@@ -9,6 +9,7 @@ import (
 	"kedaiprogrammer/handler"
 	"kedaiprogrammer/helper"
 	"kedaiprogrammer/helpers"
+	"kedaiprogrammer/kedaihelpers"
 	"kedaiprogrammer/users"
 	"log"
 	"net/http"
@@ -18,6 +19,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -36,21 +38,6 @@ func main() {
 
 	dbs := core.DBConnect()
 	defer dbs.Dbx.Close()
-	// repository
-	userRepository := users.NewRepository(initGorm)
-	businessRepository := businesses.NewRepository(initGorm)
-	categoryRepository := categories.NewRepository(initGorm, dbs)
-
-	// services
-	userServices := users.NewServices(userRepository)
-	businessServices := businesses.NewServices(businessRepository)
-	categoryServices := categories.NewServices(categoryRepository)
-	authServices := authorization.NewServices()
-
-	// handler
-	userHandler := handler.NewUserHandler(userServices, authServices)
-	businessHandler := handler.NewBusinessHandler(businessServices)
-	categoryHandler := handler.NewCategoryHandler(categoryServices)
 
 	router := gin.New()
 
@@ -67,6 +54,7 @@ func main() {
 	}))
 
 	router.Use(gin.Recovery())
+	Routing(router, dbs, initGorm)
 
 	tmphttpreadheadertimeout, _ := time.ParseDuration(viper.GetString("server.readheadertimeout") + "s")
 	tmphttpreadtimeout, _ := time.ParseDuration(viper.GetString("server.readtimeout") + "s")
@@ -84,6 +72,34 @@ func main() {
 	}
 	fmt.Println("🚀 Server running on port:", viper.GetString("server.port"))
 	s.ListenAndServe()
+
+}
+func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
+	time.Local = time.UTC
+
+	router.Static("/logo-path", viper.GetString("upload_path.logo"))
+	router.Any("", func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{
+			"status":  "OK",
+			"Message": "Welcome to " + viper.GetString("appName"),
+		})
+	})
+
+	// repository
+	userRepository := users.NewRepository(initGorm)
+	businessRepository := businesses.NewRepository(initGorm)
+	categoryRepository := categories.NewRepository(initGorm, dbs)
+
+	// services
+	userServices := users.NewServices(userRepository)
+	businessServices := businesses.NewServices(businessRepository)
+	categoryServices := categories.NewServices(categoryRepository)
+	authServices := authorization.NewServices()
+
+	// handler
+	userHandler := handler.NewUserHandler(userServices, authServices)
+	businessHandler := handler.NewBusinessHandler(businessServices)
+	categoryHandler := handler.NewCategoryHandler(categoryServices)
 
 	versioning := router.Group("/api/v1")
 
@@ -106,7 +122,6 @@ func main() {
 		categoryRouter.GET("/list", categoryHandler.GetAllCategory)
 		categoryRouter.GET("/:id", categoryHandler.GetDetailCategory)
 	}
-
 }
 
 func authMiddleware(authServices authorization.Services, userServices users.Services) gin.HandlerFunc {
