@@ -35,7 +35,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-
+	initGorm.AutoMigrate(categories.Category{}, businesses.Business{}, users.User{})
 	dbs := core.DBConnect()
 	defer dbs.Dbx.Close()
 
