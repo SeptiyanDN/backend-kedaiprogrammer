@@ -1,15 +1,9 @@
-FROM postgres:15.1-alpine
+FROM postgres:latest
 
-# Set environment variables for database
 ENV POSTGRES_USER=postgres
 ENV POSTGRES_PASSWORD=development
 ENV POSTGRES_DB=kedaiprogrammer
 
-# Copy initialization script
+EXPOSE 5432
 
-
-LABEL author="Your Name"
-LABEL description="Postgres Image for demo"
-LABEL version="1.0"
-
-COPY *.sql /docker-entrypoint-initdb.d/
+CMD ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
