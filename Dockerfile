@@ -14,7 +14,7 @@ ENV DB_USER=postgres
 ENV DB_PASSWORD=development
 
 # Expose the application port
-EXPOSE 3500
+EXPOSE 8080
 
 # Run the application
 CMD ["/app/main", "--host", "0.0.0.0"]
