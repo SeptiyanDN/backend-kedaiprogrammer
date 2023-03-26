@@ -9,7 +9,7 @@
         "idletimeout": 90
     },
     "database_local": {
-        "host": "172.31.20.79",
+        "host": "103.52.115.153",
         "username": "postgres",
         "name": "kedaiprogrammer",
         "port": 5432,

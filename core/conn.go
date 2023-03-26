@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"kedaiprogrammer/businesses"
+	"kedaiprogrammer/categories"
 	"kedaiprogrammer/kedaihelpers"
 	"kedaiprogrammer/users"
 	"log"
@@ -51,6 +52,7 @@ func InitGorm() (*gorm.DB, error) {
 	fmt.Println("🚀 Connected Successfully to the Database")
 	db.AutoMigrate(users.User{})
 	db.AutoMigrate(businesses.Business{})
+	db.AutoMigrate(categories.Category{})
 
 	return db, nil
 }
