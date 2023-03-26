@@ -52,7 +52,7 @@ func main() {
 	businessHandler := handler.NewBusinessHandler(businessServices)
 	categoryHandler := handler.NewCategoryHandler(categoryServices)
 
-	router := gin.Default()
+	router := gin.New()
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
@@ -65,6 +65,9 @@ func main() {
 		},
 		MaxAge: 12 * time.Hour,
 	}))
+
+	router.Use(gin.Recovery())
+
 	tmphttpreadheadertimeout, _ := time.ParseDuration(viper.GetString("server.readheadertimeout") + "s")
 	tmphttpreadtimeout, _ := time.ParseDuration(viper.GetString("server.readtimeout") + "s")
 	tmphttpwritetimeout, _ := time.ParseDuration(viper.GetString("server.writetimeout") + "s")
