@@ -42,13 +42,16 @@ func main() {
 	router := gin.New()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
+		AllowOrigins:           []string{"https://septiyan.my.id"},
+		AllowMethods:           []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:           []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type"},
+		ExposeHeaders:          []string{"Content-Length"},
+		AllowCredentials:       true,
+		AllowAllOrigins:        true,
+		AllowWildcard:          true,
+		AllowBrowserExtensions: true,
 		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://github.com"
+			return origin == "https://septiyan.my.id"
 		},
 		MaxAge: 12 * time.Hour,
 	}))
