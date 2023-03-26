@@ -41,13 +41,13 @@ func main() {
 	router := gin.New()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://septiyan.my.id", "http://septiyan.my.id"},
+		AllowOrigins:     []string{"https://septiyan.my.id", "http://septiyan.my.id", "http://localhost:4173", "http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://septiyan.my.id" || origin == "http://septiyan.my.id"
+			return origin == "https://septiyan.my.id" || origin == "http://septiyan.my.id" || origin == "http://localhost:3000" || origin == "http://localhost:4173"
 		},
 		MaxAge: 12 * time.Hour,
 	}))
