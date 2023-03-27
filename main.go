@@ -46,10 +46,7 @@ func main() {
 		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://septiyan.my.id" || origin == "http://septiyan.my.id" || origin == "http://localhost:3000" || origin == "http://localhost:4173"
-		},
-		MaxAge: 12 * time.Hour,
+		MaxAge:           12 * time.Hour,
 	}))
 
 	router.Use(gin.Recovery())
