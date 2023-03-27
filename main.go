@@ -40,39 +40,21 @@ func main() {
 
 	router := gin.New()
 
-	config := cors.DefaultConfig()
-	config.AllowOrigins = []string{"https://septiyan.my.id", "http://septiyan.my.id", "http://localhost:4173", "http://localhost:3000"}
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
-	config.ExposeHeaders = []string{"Content-Length"}
-	config.AllowCredentials = true
-
-	router.Use(cors.New(config))
-
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000", "https://septiyan.my.id"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 	router.Use(gin.Recovery())
 	Routing(router, dbs, initGorm)
 
-	tmphttpreadheadertimeout, _ := time.ParseDuration(viper.GetString("server.readheadertimeout") + "s")
-	tmphttpreadtimeout, _ := time.ParseDuration(viper.GetString("server.readtimeout") + "s")
-	tmphttpwritetimeout, _ := time.ParseDuration(viper.GetString("server.writetimeout") + "s")
-	tmphttpidletimeout, _ := time.ParseDuration(viper.GetString("server.idletimeout") + "s")
-
-	s := &http.Server{
-		Addr:              ":" + viper.GetString("server.port"),
-		Handler:           router,
-		ReadHeaderTimeout: tmphttpreadheadertimeout,
-		ReadTimeout:       tmphttpreadtimeout,
-		WriteTimeout:      tmphttpwritetimeout,
-		IdleTimeout:       tmphttpidletimeout,
-		//MaxHeaderBytes:    1 << 20,
-	}
-	fmt.Println("🚀 Server running on port:", viper.GetString("server.port"))
-	s.ListenAndServe()
-
+	router.Run(":8081")
 }
 func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	time.Local = time.UTC
-
 	router.Static("/logo-path", viper.GetString("upload_path.logo"))
 	router.Any("", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
