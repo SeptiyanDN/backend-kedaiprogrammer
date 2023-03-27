@@ -40,14 +40,13 @@ func main() {
 
 	router := gin.New()
 
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://septiyan.my.id", "http://septiyan.my.id", "http://localhost:4173", "http://localhost:3000"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"https://septiyan.my.id", "http://septiyan.my.id", "http://localhost:4173", "http://localhost:3000"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization"}
+	config.ExposeHeaders = []string{"Content-Length"}
+
+	router.Use(cors.New(config))
 
 	router.Use(gin.Recovery())
 	Routing(router, dbs, initGorm)
