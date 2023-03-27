@@ -19,6 +19,7 @@ func (s *services) SaveBusiness(input AddBusinessInput) (Business, error) {
 	business := Business{}
 	business.BusinessID = helpers.GenerateUUID()
 	business.Business_name = input.Business_name
+	business.Domain = input.Domain
 	business.IsActive = true
 	newBusiness, err := s.repository.Save(business)
 	if err != nil {
