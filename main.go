@@ -50,8 +50,8 @@ func main() {
 	}))
 	router.Use(gin.Recovery())
 	Routing(router, dbs, initGorm)
-
-	router.Run(":8081")
+	fmt.Println("🚀 Server Backend Successfully Running on port : " + viper.GetString("server.port"))
+	router.Run(":" + viper.GetString("server.port"))
 }
 func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	time.Local = time.UTC
