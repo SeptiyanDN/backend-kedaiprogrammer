@@ -17,10 +17,6 @@
         "max_idle_connection": 30,
         "max_lifetime_connection": 30
     },
-    "upload_path" : {
-        "logo":"assets/logo/",
-        "foto":"assets/foto/"
-    },
     "redis_credentials" : {
         "REDIS_URL" : "cudo.co.id:53947",
         "REDIS_PASSWORD" :"revampsrb123!@#"
@@ -29,19 +25,21 @@
         "SECRET_KEY_JWT" : "SECRET_KEY_JWT_SUPERDUPERRAHASIA",
         "SESSIONS_STORE" : "SMARTPATROL"
     },
-    "S3_CREDENTIALS_" :{
-        "BUCKET" : "staging-smartpatrol",
-        "URL" :"is3.cloudhost.id",
-        "ACCESS_ID":"1DEX1YGLABAD4OCM8M43",
-        "SECRET_KEY" :"BckVxDudmAQGS2Lrx7sSxmv9BjwmGX3KAzo6nQtx",
-        "REGION" :"ap-southeast-3"
-    },
     "S3_CREDENTIALS" :{
         "BUCKET" : "staging-smartpatrol",
         "URL" :"is3.cloudhost.id",
         "ACCESS_ID":"1DEX1YGLABAD4OCM8M43",
         "SECRET_KEY" :"BckVxDudmAQGS2Lrx7sSxmv9BjwmGX3KAzo6nQtx",
         "REGION" :"id-jkt-1"
+    },
+    "THIRD_PARTY" : {
+        "URL_DOMAIN" : "https://api.liqu.id:443/v1",
+        "ID_DOMAIN" : "9815",
+        "APIKEY_DOMAIN" : "c8331f82f06c11ffe5ad342b684f04c4"
+    },
+    "upload_path" : {
+        "logo":"assets/logo/",
+        "foto":"assets/foto/"
     },
     "path_asset_upload_excel" :"assets/excel/"
 }
