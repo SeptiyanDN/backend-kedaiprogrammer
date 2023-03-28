@@ -56,3 +56,11 @@ func GetBalanceAccount(c *gin.Context) {
 	response := helper.APIResponse("Get Balance on Provider Domain Successfully", http.StatusOK, "success", body)
 	c.JSON(http.StatusOK, response)
 }
+
+func GetPriceDomain(c *gin.Context) {
+	service := domain.DomainServices{}
+	body := service.GetPriceDomain()
+
+	response := helper.APIResponse("Get Price on Provider Domain Successfully", http.StatusOK, "success", body)
+	c.JSON(http.StatusOK, response)
+}

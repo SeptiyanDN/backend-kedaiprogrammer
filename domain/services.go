@@ -94,3 +94,20 @@ func (s *DomainServices) GetBalanceAccount() map[string]interface{} {
 
 	return newObj
 }
+
+func (s *DomainServices) GetPriceDomain() map[string]interface{} {
+	path := "account/prices"
+	url := fmt.Sprintf("%s/%s", viper.GetString("THIRD_PARTY.URL_DOMAIN"), path)
+	req, _ := http.NewRequest("GET", url, nil)
+
+	req.SetBasicAuth("9815", "c8331f82f06c11ffe5ad342b684f04c4")
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+
+	body, _ := ioutil.ReadAll(resp.Body)
+	newObj := map[string]interface{}{
+		"balance": string(body),
+	}
+
+	return newObj
+}

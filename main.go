@@ -103,6 +103,7 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	domainRouter := versioning.Group("domain")
 	{
 		domainRouter.GET("/account/balance", func(ctx *gin.Context) { handler.GetBalanceAccount(ctx) })
+		domainRouter.GET("/price", func(ctx *gin.Context) { handler.GetBalanceAccount(ctx) })
 		domainRouter.GET("/list-all", func(ctx *gin.Context) { handler.GetAllDomainsHandler(ctx) })
 		domainRouter.GET("/avaibility/:keyword", func(ctx *gin.Context) { handler.GetAvailabiltyDomain(ctx) })
 		domainRouter.GET("/detail/:domain", func(ctx *gin.Context) { handler.GetDetailManageDomain(ctx) })
