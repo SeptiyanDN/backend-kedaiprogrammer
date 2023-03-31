@@ -71,7 +71,7 @@ func (s *DomainServices) GetBalanceAccount() map[string]interface{} {
 
 func (s *DomainServices) GetAvailabiltyDomain(keyword string) (map[string]interface{}, error) {
 	path := "domains/suggestion"
-	params := "tlds=com%2Corg%2Cnet%2Cid&limit=10&hyphen_allowed=true&add_related=false"
+	params := "tlds=ac.id%2Cbiz.id%2Cco.id%2Ccom%2Cid%2Cmy.id%2Cor.id%2Cponpes.id%2Csch.id%2Cweb.id%2Cxyz&limit=10&hyphen_allowed=true&add_related=false"
 	url := fmt.Sprintf("%s/%s?%s=%s&%s", viper.GetString("THIRD_PARTY.URL_DOMAIN"), path, "keyword", keyword, params)
 	req, _ := http.NewRequest("GET", url, nil)
 
