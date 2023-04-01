@@ -41,7 +41,7 @@ func main() {
 	router := gin.New()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "https://septiyan.my.id"},
+		AllowOrigins:     []string{"http://localhost:3000", "https://septiyan.my.id","http://localhost:3001","http://localhost:4173"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -89,13 +89,13 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	}
 	businessRouter := versioning.Group("business")
 	{
-		businessRouter.Use(authMiddleware(authServices, userServices))
+		// businessRouter.Use(authMiddleware(authServices, userServices))
 		businessRouter.POST("/", businessHandler.SaveBusiness)
 		businessRouter.GET("/list", businessHandler.GetAllBusiness)
 	}
 	categoryRouter := versioning.Group("categories")
 	{
-		categoryRouter.Use(authMiddleware(authServices, userServices))
+		// categoryRouter.Use(authMiddleware(authServices, userServices))
 		categoryRouter.POST("/", categoryHandler.SaveCategory)
 		categoryRouter.GET("/list", categoryHandler.GetAllCategory)
 		categoryRouter.GET("/:id", categoryHandler.GetDetailCategory)
