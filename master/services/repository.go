@@ -1,4 +1,4 @@
-package categories
+package services
 
 import (
 	"fmt"
@@ -9,9 +9,9 @@ import (
 )
 
 type Repository interface {
-	Save(category Category) (Category, error)
+	Save(service Service) (Service, error)
 	GetAllWithCounts(search string, limit, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error)
-	GetCategory(id string) (map[string]interface{}, error)
+	GetService(id string) (map[string]interface{}, error)
 }
 
 type repository struct {
@@ -23,27 +23,25 @@ func NewRepository(db *gorm.DB, dbs kedaihelpers.DBStruct) *repository {
 	return &repository{db, dbs}
 }
 
-func (r *repository) Save(category Category) (Category, error) {
-	err := r.db.Create(&category).Error
+func (r *repository) Save(service Service) (Service, error) {
+	err := r.db.Create(&service).Error
 	fmt.Println(err)
 
 	if err != nil {
-		return category, err
+		return service, err
 	}
-	return category, nil
+	return service, nil
 }
 
-func (r *repository) GetCategory(id string) (map[string]interface{}, error) {
+func (r *repository) GetService(id string) (map[string]interface{}, error) {
 	sql := `Select 
-				a.category_id,
-				a.category_name,
-				a.slug,
+				a.service_id,
+				a.service_name,
 				a.is_active,
-				a.business_id,
 				b.business_name
-			FROM categories as a 
+			FROM services as a 
 			LEFT JOIN businesses as b on b.business_id = a.business_id
-			Where a.category_id = $1
+			Where a.service_id = $1
 	`
 	row := r.dbs.DatabaseQuerySingleRow(sql, id)
 	if len(row) < 1 {
@@ -62,24 +60,22 @@ func (r *repository) GetAllWithCounts(search string, limit, offset int, OrderCol
 	if search != "" {
 		queryWhere += ` AND
 		(
-			a.category_name LIKE '%` + search + `%'
+			a.service_name LIKE '%` + search + `%'
 		)`
 	}
 
 	sql := `SELECT 
-				a.category_id,
-				a.category_name,
-				a.slug,
+				a.service_id,
+				a.service_name,
 				a.is_active,
-				a.business_id,
 				b.business_name,
 				(
 					SELECT 
 						COUNT(a2.*)  
-					FROM categories a2 
+					FROM services a2 
 					WHERE a2.is_active = true
 				) AS total
-			FROM categories as a
+			FROM services as a
 			left join businesses as b on b.business_id = a.business_id
 			` + queryWhere + ` 
 			` + queryOrder + ` ` + queryLimit

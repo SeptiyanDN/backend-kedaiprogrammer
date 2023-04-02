@@ -9,7 +9,7 @@ type Category struct {
 	CategoryName string    `json:"category_name"`
 	Slug         string    `json:"slug"`
 	IsActive     bool      `json:"is_active"`
-	BusinessID   string    `json:"business_id"`
+	ServiceID    string    `json:"service_id"`
 	Created_at   time.Time `gorm:"type:timestamp;default:CURRENT_TIMESTAMP"`
 	Updated_at   time.Time
 }

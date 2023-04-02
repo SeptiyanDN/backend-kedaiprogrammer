@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"kedaiprogrammer/authorization"
-	"kedaiprogrammer/businesses"
-	"kedaiprogrammer/categories"
 	"kedaiprogrammer/core"
 	"kedaiprogrammer/handler"
 	"kedaiprogrammer/helper"
 	"kedaiprogrammer/helpers"
 	"kedaiprogrammer/kedaihelpers"
+	"kedaiprogrammer/master/businesses"
+	"kedaiprogrammer/master/categories"
+	"kedaiprogrammer/master/services"
 	"kedaiprogrammer/users"
 	"log"
 	"net/http"
@@ -39,9 +40,8 @@ func main() {
 	defer dbs.Dbx.Close()
 
 	router := gin.New()
-
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "https://septiyan.my.id","http://localhost:3001","http://localhost:4173"},
+		AllowOrigins:     []string{"http://localhost:3000", "https://septiyan.my.id", "http://localhost:3001", "http://localhost:4173"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -66,17 +66,20 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	// repository
 	userRepository := users.NewRepository(initGorm)
 	businessRepository := businesses.NewRepository(initGorm)
+	serviceRepository := services.NewRepository(initGorm, dbs)
 	categoryRepository := categories.NewRepository(initGorm, dbs)
 
 	// services
 	userServices := users.NewServices(userRepository)
 	businessServices := businesses.NewServices(businessRepository)
+	serviceServices := services.NewServices(serviceRepository)
 	categoryServices := categories.NewServices(categoryRepository)
 	authServices := authorization.NewServices()
 
 	// handler
 	userHandler := handler.NewUserHandler(userServices, authServices)
 	businessHandler := handler.NewBusinessHandler(businessServices)
+	serviceHandler := handler.NewServiceHandler(serviceServices)
 	categoryHandler := handler.NewCategoryHandler(categoryServices)
 
 	versioning := router.Group("/api/v1")
@@ -89,13 +92,20 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	}
 	businessRouter := versioning.Group("business")
 	{
-		// businessRouter.Use(authMiddleware(authServices, userServices))
+		businessRouter.Use(authMiddleware(authServices, userServices))
 		businessRouter.POST("/", businessHandler.SaveBusiness)
 		businessRouter.GET("/list", businessHandler.GetAllBusiness)
 	}
+	serviceRouter := versioning.Group("services")
+	{
+		serviceRouter.Use(authMiddleware(authServices, userServices))
+		serviceRouter.POST("/", serviceHandler.SaveService)
+		serviceRouter.GET("/list", serviceHandler.GetAllServices)
+		serviceRouter.GET("/:id", serviceHandler.GetDetailService)
+	}
 	categoryRouter := versioning.Group("categories")
 	{
-		// categoryRouter.Use(authMiddleware(authServices, userServices))
+		categoryRouter.Use(authMiddleware(authServices, userServices))
 		categoryRouter.POST("/", categoryHandler.SaveCategory)
 		categoryRouter.GET("/list", categoryHandler.GetAllCategory)
 		categoryRouter.GET("/:id", categoryHandler.GetDetailCategory)

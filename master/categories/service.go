@@ -24,7 +24,7 @@ func (s *services) SaveCategory(input AddCategoryInput) (Category, error) {
 	category.CategoryName = input.Category_name
 	category.Slug = input.Slug
 	category.IsActive = true
-	category.BusinessID = input.BusinessID
+	category.ServiceID = input.ServiceID
 	newCategory, err := s.repository.Save(category)
 	if err != nil {
 		return category, err

@@ -8,8 +8,17 @@
         "writetimeout": 120,
         "idletimeout": 90
     },
-    "database_local": {
+    "database_staging": {
         "host": "54.169.58.48",
+        "username": "postgres",
+        "name": "kedaiprogrammer",
+        "port": 5432,
+        "password": "development",
+        "max_idle_connection": 30,
+        "max_lifetime_connection": 30
+    },
+    "database_local" : {
+        "host": "localhost",
         "username": "postgres",
         "name": "kedaiprogrammer",
         "port": 5432,

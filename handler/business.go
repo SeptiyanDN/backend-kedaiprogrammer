@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"kedaiprogrammer/businesses"
 	"kedaiprogrammer/helper"
+	"kedaiprogrammer/master/businesses"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

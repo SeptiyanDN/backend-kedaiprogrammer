@@ -2,9 +2,10 @@ package core
 
 import (
 	"fmt"
-	"kedaiprogrammer/businesses"
-	"kedaiprogrammer/categories"
 	"kedaiprogrammer/kedaihelpers"
+	"kedaiprogrammer/master/businesses"
+	"kedaiprogrammer/master/categories"
+	"kedaiprogrammer/master/services"
 	"kedaiprogrammer/users"
 	"log"
 	"os"
@@ -53,6 +54,7 @@ func InitGorm() (*gorm.DB, error) {
 	db.AutoMigrate(users.User{})
 	db.AutoMigrate(businesses.Business{})
 	db.AutoMigrate(categories.Category{})
+	db.AutoMigrate(services.Service{})
 
 	return db, nil
 }

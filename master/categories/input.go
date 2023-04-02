@@ -5,7 +5,7 @@ type FindCategoryInput struct {
 }
 type AddCategoryInput struct {
 	Category_name string `form:"category_name" binding:"required" json:"category_name"`
-	BusinessID    string `form:"business_id" binding:"required" json:"business_id"`
+	ServiceID     string `form:"service_id" binding:"required" json:"service_id"`
 	Slug          string `form:"slug" binding:"required" json:"slug"`
 }
 
