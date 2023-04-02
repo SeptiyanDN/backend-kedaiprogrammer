@@ -17,7 +17,7 @@ func DBConnect() kedaihelpers.DBStruct {
 	username := viper.GetString("database_staging.username")
 	password := viper.GetString("database_staging.password")
 	database := viper.GetString("database_staging.name")
-	host := viper.GetString("database_local.host")
+	host := viper.GetString("database_staging.host")
 	port := viper.GetInt("database_staging.port")
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, username, password, database)
@@ -39,7 +39,7 @@ func InitGorm() (*gorm.DB, error) {
 	username := viper.GetString("database_staging.username")
 	password := viper.GetString("database_staging.password")
 	database := viper.GetString("database_staging.name")
-	host := viper.GetString("database_local.host")
+	host := viper.GetString("database_staging.host")
 	port := viper.GetInt("database_staging.port")
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Tokyo", host, port, username, password, database)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
