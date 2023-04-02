@@ -18,11 +18,11 @@ import (
 )
 
 func DBConnect() kedaihelpers.DBStruct {
-	username := viper.GetString("database_local.username")
-	password := viper.GetString("database_local.password")
-	database := viper.GetString("database_local.name")
-	host := viper.GetString("database_local.host")
-	port := viper.GetInt("database_local.port")
+	username := viper.GetString("database_staging.username")
+	password := viper.GetString("database_staging.password")
+	database := viper.GetString("database_staging.name")
+	host := viper.GetString("database_staging.host")
+	port := viper.GetInt("database_staging.port")
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, username, password, database)
 	db, err := sqlx.Connect("postgres", psqlInfo)
@@ -40,11 +40,11 @@ func DBConnect() kedaihelpers.DBStruct {
 }
 
 func InitGorm() (*gorm.DB, error) {
-	username := viper.GetString("database_local.username")
-	password := viper.GetString("database_local.password")
-	database := viper.GetString("database_local.name")
-	host := viper.GetString("database_local.host")
-	port := viper.GetInt("database_local.port")
+	username := viper.GetString("database_staging.username")
+	password := viper.GetString("database_staging.password")
+	database := viper.GetString("database_staging.name")
+	host := viper.GetString("database_staging.host")
+	port := viper.GetInt("database_staging.port")
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable TimeZone=Asia/Tokyo", host, port, username, password, database)
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
