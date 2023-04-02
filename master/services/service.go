@@ -6,7 +6,7 @@ import (
 
 type Services interface {
 	Save(input AddServiceInput) (Service, error)
-	GetAll(search string, limit int, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error)
+	GetAll(filterValue string, size int, page int, field string, dir string, filterField string, filterType string) ([]map[string]interface{}, int, int, error)
 	GetService(id string) (map[string]interface{}, error)
 }
 
@@ -31,8 +31,8 @@ func (s *services) Save(input AddServiceInput) (Service, error) {
 	return newService, nil
 }
 
-func (s *services) GetAll(search string, limit int, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error) {
-	return s.repository.GetAllWithCounts(search, limit, offset, OrderColumn, orderDirection)
+func (s *services) GetAll(filterValue string, size int, page int, field string, dir string, filterField string, filterType string) ([]map[string]interface{}, int, int, error) {
+	return s.repository.GetAllWithCounts(filterValue, size, page, field, dir, filterField, filterType)
 }
 
 func (s *services) GetService(id string) (map[string]interface{}, error) {

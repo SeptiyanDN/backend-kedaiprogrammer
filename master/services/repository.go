@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"kedaiprogrammer/kedaihelpers"
 
@@ -10,7 +11,7 @@ import (
 
 type Repository interface {
 	Save(service Service) (Service, error)
-	GetAllWithCounts(search string, limit, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error)
+	GetAllWithCounts(filterValue string, size int, page int, field, dir, filterField, filterType string) ([]map[string]interface{}, int, int, error)
 	GetService(id string) (map[string]interface{}, error)
 }
 
@@ -49,19 +50,39 @@ func (r *repository) GetService(id string) (map[string]interface{}, error) {
 	}
 	return row, nil
 }
+func (r *repository) GetAllWithCounts(filterValue string, size int, page int, field, dir, filterField, filterType string) ([]map[string]interface{}, int, int, error) {
+	offsets := (page - 1) * size
+	fmt.Println(offsets)
+	fmt.Println(page)
+	orderField := field
+	orderDirection := dir
 
-func (r *repository) GetAllWithCounts(search string, limit, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error) {
-	offsets := (offset - 1) * limit
-
-	queryOrder := `ORDER BY ` + cast.ToString(OrderColumn) + ` ` + cast.ToString(orderDirection)
-	queryLimit := `LIMIT ` + cast.ToString(limit) + ` OFFSET ` + cast.ToString(offsets)
+	queryOrder := `ORDER BY ` + cast.ToString(orderField) + ` ` + cast.ToString(orderDirection)
+	queryLimit := `LIMIT ` + cast.ToString(size) + ` OFFSET ` + cast.ToString(offsets)
 
 	queryWhere := `WHERE a.is_active = true`
-	if search != "" {
-		queryWhere += ` AND
-		(
-			a.service_name LIKE '%` + search + `%'
-		)`
+	if filterValue != "" {
+		var operator string
+		switch filterType {
+		case "eq":
+			operator = "="
+		// case "lt":
+		// 	operator = "<"
+		// case "lte":
+		// 	operator = "<="
+		// case "gt":
+		// 	operator = ">"
+		// case "gte":
+		// 	operator = ">="
+		case "neq":
+			operator = "!="
+		case "like":
+			operator = "LIKE"
+			filterValue = "%" + filterValue + "%"
+		default:
+			return nil, 0, 0, errors.New("invalid filter type")
+		}
+		queryWhere += ` AND ` + filterField + ` ` + operator + ` '` + filterValue + `'`
 	}
 
 	sql := `SELECT 
@@ -81,6 +102,7 @@ func (r *repository) GetAllWithCounts(search string, limit, offset int, OrderCol
 			` + queryOrder + ` ` + queryLimit
 
 	rows := r.dbs.DatabaseQueryRows(sql)
+
 	if len(rows) < 1 {
 		return nil, 0, 0, nil
 	}

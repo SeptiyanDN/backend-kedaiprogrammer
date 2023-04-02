@@ -50,8 +50,14 @@ func (h *categoryHandler) GetAllCategory(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
-
-	response := helpers.APIDTResponse("Success to Get Categories", http.StatusOK, "success", data, countFiltered, countAll)
+	lastPage := countAll / limit
+	if countFiltered < countAll {
+		lastPage = countFiltered/limit + 1
+	}
+	if countFiltered < limit {
+		lastPage = 1
+	}
+	response := helpers.APIDTResponse("Success to Get Categories", http.StatusOK, "success", data, countFiltered, countAll, lastPage)
 	c.JSON(http.StatusOK, response)
 }
 

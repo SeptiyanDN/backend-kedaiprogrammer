@@ -16,6 +16,7 @@ type ResponseDT struct {
 	Data          interface{} `json:"data"`
 	TotalData     int         `json:"recordsTotal"`
 	TotalFiltered int         `json:"recordsFiltered"`
+	LastPage      int         `json:"last_page"`
 }
 
 type Meta struct {
@@ -63,7 +64,7 @@ func APIResponse(message string, code int, status string, data interface{}) Resp
 	return jsonResponse
 }
 
-func APIDTResponse(message string, code int, status string, data interface{}, totalData, totalFiltered int) ResponseDT {
+func APIDTResponse(message string, code int, status string, data interface{}, totalData, totalFiltered, lastPage int) ResponseDT {
 	meta := Meta{
 		Message: message,
 		Code:    code,
@@ -75,6 +76,7 @@ func APIDTResponse(message string, code int, status string, data interface{}, to
 		Data:          data,
 		TotalData:     totalData,
 		TotalFiltered: totalFiltered,
+		LastPage:      lastPage,
 	}
 
 	jsonResponseBytes, err := json.Marshal(jsonResponse)

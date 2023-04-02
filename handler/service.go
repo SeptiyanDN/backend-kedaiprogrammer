@@ -38,20 +38,29 @@ func (h *serviceHandler) SaveService(c *gin.Context) {
 }
 
 func (h *serviceHandler) GetAllServices(c *gin.Context) {
-	search := c.Query("search")
-	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "5"))
-	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "1"))
-	orderColumn := c.DefaultQuery("order_column", "service_name")
-	orderDirection := c.DefaultQuery("order_direction", "asc")
+	size, _ := strconv.Atoi(c.DefaultQuery("size", "5"))
+	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 
-	data, countFiltered, countAll, err := h.serviceServices.GetAll(search, limit, offset, orderColumn, orderDirection)
+	field := c.DefaultQuery("sorters[0][field]", "service_name")
+	dir := c.DefaultQuery("sorters[0][dir]", "asc")
+	filterField := c.Query("filters[0][field]") // filter column
+	filterType := c.Query("filters[0][type]")   // filter type ( like )
+	filterValue := c.Query("filters[0][value]") // search
+
+	data, countAll, countFiltered, err := h.serviceServices.GetAll(filterValue, size, page, field, dir, filterField, filterType)
 	if err != nil {
 		response := helpers.APIResponse(err.Error(), http.StatusInternalServerError, "success", nil)
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
-
-	response := helpers.APIDTResponse("Success to Get Services", http.StatusOK, "success", data, countFiltered, countAll)
+	lastPage := countAll / size
+	if countFiltered < countAll {
+		lastPage = countFiltered/size + 1
+	}
+	if countFiltered < size {
+		lastPage = 1
+	}
+	response := helpers.APIDTResponse("Success to Get Services", http.StatusOK, "success", data, countFiltered, countAll, lastPage)
 	c.JSON(http.StatusOK, response)
 }
 
