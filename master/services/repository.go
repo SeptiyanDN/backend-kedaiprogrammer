@@ -52,8 +52,6 @@ func (r *repository) GetService(id string) (map[string]interface{}, error) {
 }
 func (r *repository) GetAllWithCounts(filterValue string, size int, page int, field, dir, filterField, filterType string) ([]map[string]interface{}, int, int, error) {
 	offsets := (page - 1) * size
-	fmt.Println(offsets)
-	fmt.Println(page)
 	orderField := field
 	orderDirection := dir
 
@@ -64,17 +62,17 @@ func (r *repository) GetAllWithCounts(filterValue string, size int, page int, fi
 	if filterValue != "" {
 		var operator string
 		switch filterType {
-		case "eq":
+		case "=":
 			operator = "="
-		// case "lt":
-		// 	operator = "<"
-		// case "lte":
-		// 	operator = "<="
-		// case "gt":
-		// 	operator = ">"
-		// case "gte":
-		// 	operator = ">="
-		case "neq":
+		case "lt":
+			operator = "<"
+		case "lte":
+			operator = "<="
+		case "gt":
+			operator = ">"
+		case "gte":
+			operator = ">="
+		case "!=":
 			operator = "!="
 		case "like":
 			operator = "LIKE"
@@ -82,6 +80,8 @@ func (r *repository) GetAllWithCounts(filterValue string, size int, page int, fi
 		default:
 			return nil, 0, 0, errors.New("invalid filter type")
 		}
+		fmt.Println(operator)
+		fmt.Println(filterValue)
 		queryWhere += ` AND ` + filterField + ` ` + operator + ` '` + filterValue + `'`
 	}
 
@@ -100,7 +100,6 @@ func (r *repository) GetAllWithCounts(filterValue string, size int, page int, fi
 			left join businesses as b on b.business_id = a.business_id
 			` + queryWhere + ` 
 			` + queryOrder + ` ` + queryLimit
-
 	rows := r.dbs.DatabaseQueryRows(sql)
 
 	if len(rows) < 1 {
