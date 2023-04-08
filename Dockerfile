@@ -7,7 +7,7 @@ COPY . .
 RUN go mod tidy
 RUN go build -o main .
 # Set environment variables for database connection
-ENV DB_HOST=54.169.58.48
+ENV DB_HOST=13.229.92.8
 ENV DB_PORT=5432
 ENV DB_NAME=kedaiprogrammer
 ENV DB_USER=postgres
@@ -19,4 +19,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Run the application
-CMD ["/app/main", "--host", "backend.septiyan.my.id"]
+CMD ["/app/main", "--host", "backend.kedaiprogrammer.com"]
