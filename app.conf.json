@@ -9,7 +9,7 @@
         "idletimeout": 90
     },
     "database_staging": {
-        "host": "54.169.58.48",
+        "host": "13.229.92.8",
         "username": "postgres",
         "name": "kedaiprogrammer",
         "port": 5432,
