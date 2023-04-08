@@ -36,14 +36,25 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
+	initGorm.AutoMigrate(users.User{})
+	initGorm.AutoMigrate(businesses.Business{})
 	dbs := core.DBConnect()
 	defer dbs.Dbx.Close()
 
 	router := gin.New()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000", "https://septiyan.my.id", "http://localhost:3001", "http://localhost:4173", "*"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With", "*"},
+		AllowOrigins: []string{"http://localhost:3000", "https://septiyan.my.id", "http://localhost:3001", "http://localhost:4173", "*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With", "*"},
+		AllowOriginFunc: func(origin string) bool {
+			allowedOrigins := []string{"http://localhost:3000", "https://septiyan.my.id"}
+			for _, allowedOrigin := range allowedOrigins {
+				if origin == allowedOrigin {
+					return true
+				}
+			}
+			return false
+		},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,

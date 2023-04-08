@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"kedaiprogrammer/authorization"
 	"kedaiprogrammer/helper"
 	"kedaiprogrammer/users"
@@ -49,7 +50,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	var inputCheckUsername users.CheckUsernameInput
 	inputCheckUsername.Username = input.Username
 	checkUsername, _ := h.userServices.IsUsernameAvailable(inputCheckUsername)
-
+	fmt.Println(checkUsername)
 	if checkUsername == false {
 		response := helper.APIResponse("Username Sudah Pernah Terdaftar", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
@@ -61,31 +62,20 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
 	token, err := h.authServices.GenerateJWT(newUser.Uuid, newUser.Username)
 	if err != nil {
 		response := helper.APIResponse("Register Account Failed", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
-	generateUUID := generateUUID()
-	_, err = h.userServices.SaveUUID(newUser.ID, generateUUID)
-	if err != nil {
-		response := helper.APIResponse("Register Account Failed", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
-	_, err = h.userServices.SaveToken(newUser.ID, token)
+	_, err = h.userServices.SaveToken(newUser.Uuid, token)
 	if err != nil {
 		response := helper.APIResponse("Register Account Failed", http.StatusBadRequest, "error", nil)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 
-	formatter := users.FormatUser(newUser, token, generateUUID)
-	response := helper.APIResponse("Account Has Been Created", http.StatusOK, "success", formatter)
-
+	response := helper.APIResponse("Account Has Been Created", http.StatusOK, "success", true)
 	c.JSON(http.StatusOK, response)
 }
 
@@ -115,14 +105,14 @@ func (h *userHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
-	cekToken, err := h.userServices.GetUsersByID(loggedinUser.ID)
+	cekToken, err := h.userServices.GetUserByUUID(loggedinUser.Uuid)
 	if err != nil {
 		errorMessage := gin.H{"error": err.Error()}
 		response := helper.APIResponse("Login Failed", http.StatusUnprocessableEntity, "error", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 	}
 	if cekToken.Token != token {
-		_, err = h.userServices.SaveToken(cekToken.ID, token)
+		_, err = h.userServices.SaveToken(cekToken.Uuid, token)
 		if err != nil {
 			response := helper.APIResponse("Login Account Failed", http.StatusBadRequest, "error", nil)
 			c.JSON(http.StatusBadRequest, response)

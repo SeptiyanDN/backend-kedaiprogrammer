@@ -8,11 +8,9 @@ type Repository interface {
 	Save(user User) (User, error)
 	FindByEmail(email string) (User, error)
 	FindByUsername(username string) (User, error)
-	FindByID(ID int) (User, error)
 	FindByToken(token string) (User, error)
 	FindByUUID(UUID string) (User, error)
-	FindByIdAndUpdateToken(ID int, token string) (User, error)
-	FindByIdAndUpdateUUID(ID int, generateUUID string) (User, error)
+	FindByIdAndUpdateToken(UUID string, token string) (User, error)
 }
 
 type repository struct {
@@ -54,17 +52,6 @@ func (r *repository) FindByUsername(username string) (User, error) {
 	return user, nil
 }
 
-func (r *repository) FindByID(ID int) (User, error) {
-	var user User
-	err := r.db.Where("id = ?", ID).Find(&user).Error
-
-	if err != nil {
-		return user, err
-	}
-
-	return user, nil
-}
-
 func (r *repository) FindByToken(token string) (User, error) {
 	var user User
 	err := r.db.Where("token = ?", token).Find(&user).Error
@@ -76,22 +63,13 @@ func (r *repository) FindByToken(token string) (User, error) {
 	return user, nil
 }
 
-func (r *repository) FindByIdAndUpdateToken(ID int, token string) (User, error) {
+func (r *repository) FindByIdAndUpdateToken(UUID string, token string) (User, error) {
 	var user User
-	err := r.db.Model(&user).Where("id = ?", ID).Update("token", token).Error
+	err := r.db.Model(&user).Where("uuid = ?", UUID).Update("token", token).Error
 	if err != nil {
 		return user, err
 	}
 
-	return user, nil
-}
-
-func (r *repository) FindByIdAndUpdateUUID(ID int, generateUUID string) (User, error) {
-	var user User
-	err := r.db.Model(&user).Where("id = ?", ID).Update("uuid", generateUUID).Error
-	if err != nil {
-		return user, err
-	}
 	return user, nil
 }
 

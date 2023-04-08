@@ -141,23 +141,15 @@ func ValidateUUID(encrypt string, uuid string) bool {
 	}
 	return decripted == uuid
 }
+func TimeInLocal(local string) (time.Time, time.Time) {
+	t := time.Now()
 
-// func ParentB2bToken(b2b_token string, dbs cdc.DBStruct) (bool, []string) {
-// 	sql := `SELECT * FROM master_b2b WHERE is_active=1 AND parent_id='` + b2b_token + `'`
-// 	rows := dbs.DatabaseQueryRows(sql)
-// 	newB2bToken := []string{b2b_token}
+	location, err := time.LoadLocation(local)
+	if err != nil {
+		fmt.Println(err)
+	}
+	// fmt.Println("Location : ", location, " Time : ", t.In(location)) // America/New_York
+	resp := t.In(location)
 
-// 	for _, value := range rows {
-// 		newB2bToken = append(newB2bToken, cast.ToString(value["b2b_token"]))
-
-// 		_, valueParentB2bToken := ParentB2bToken(cast.ToString(value["b2b_token"]), dbs)
-
-// 		if len(valueParentB2bToken) > 0 {
-// 			for _, value2 := range valueParentB2bToken {
-// 				newB2bToken = append(newB2bToken, cast.ToString(value2))
-// 			}
-// 		}
-// 	}
-
-// 	return true, newB2bToken
-// }
+	return t, resp
+}

@@ -1,8 +1,15 @@
 package users
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"kedaiprogrammer/helpers"
+	"net/http"
+	"strings"
 
+	"github.com/jinzhu/gorm/dialects/postgres"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -11,12 +18,9 @@ type Services interface {
 	Login(input LoginInput) (User, error)
 	IsEmailAvailable(input CheckEmailInput) (bool, error)
 	IsUsernameAvailable(input CheckUsernameInput) (bool, error)
-	GetUsersByID(ID int) (User, error)
 	GetUserByUUID(UUID string) (User, error)
 	GetUserByToken(token string) (User, error)
-	SaveToken(ID int, token string) (User, error)
-	SaveUUID(ID int, generateUUID string) (User, error)
-	GetToken(ID int) (string, error)
+	SaveToken(UUID string, token string) (User, error)
 }
 
 type services struct {
@@ -29,6 +33,29 @@ func NewServices(repository Repository) *services {
 
 func (s *services) RegisterUser(input RegisterUserInput) (User, error) {
 	user := User{}
+	picture := ""
+	if input.Picture != "" {
+		decodedImage, err := base64.StdEncoding.DecodeString(input.Picture)
+		// file := bytes.NewReader(decodedImage)
+		fileType := http.DetectContentType(decodedImage)
+		if fileType != "image/jpeg" && fileType != "image/jpg" && fileType != "image/png" {
+			return user, err
+		}
+		_, waktu := helpers.TimeInLocal("Asia/Jakarta")
+		tz := waktu.Format("20060102150405")
+		waktuFile := tz
+		picture = fmt.Sprintf("%s/%s.%s", input.Username, waktuFile, strings.Split(fileType, "/")[1])
+	}
+	user.Uuid = helpers.GenerateUUID()
+	user_info := make(map[string]interface{})
+	user_info["full_name"] = input.FullName
+	user_info["telepon"] = input.Telepon
+	user_info["Address"] = input.Address
+	user_info["picture"] = picture
+	user_info["business_inheritance"] = input.BusinessInheritance
+	dataJson, _ := json.Marshal(user_info)
+	JsonRaw := json.RawMessage(dataJson)
+	user.UserInfo = postgres.Jsonb{JsonRaw}
 	user.Username = input.Username
 	user.Email = input.Email
 	password, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
@@ -36,6 +63,11 @@ func (s *services) RegisterUser(input RegisterUserInput) (User, error) {
 		return user, err
 	}
 	user.Password = string(password)
+	// err = helpers.SaveObjectToS3(s3, "staging-smartpatrol/absensi/", imageIn, file)
+	// if err != nil {
+	// 	return false, err
+	// }
+	fmt.Println(user)
 	newUser, err := s.repository.Save(user)
 	if err != nil {
 		return newUser, err
@@ -52,7 +84,7 @@ func (s *services) Login(input LoginInput) (User, error) {
 	if err != nil {
 		return user, err
 	}
-	if user.ID == 0 {
+	if user.Uuid == "" {
 		return user, errors.New("User Not Found on the Database")
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
@@ -69,7 +101,7 @@ func (s *services) IsEmailAvailable(input CheckEmailInput) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if user.ID == 0 {
+	if user.Uuid == "" {
 		return true, nil
 	}
 	return false, nil
@@ -82,18 +114,18 @@ func (s *services) IsUsernameAvailable(input CheckUsernameInput) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	if user.ID == 0 {
+	if user.Uuid == "" {
 		return true, nil
 	}
 	return false, nil
 }
 
-func (s *services) GetUsersByID(ID int) (User, error) {
-	user, err := s.repository.FindByID(ID)
+func (s *services) GetUsersByUUID(UUID string) (User, error) {
+	user, err := s.repository.FindByUUID(UUID)
 	if err != nil {
 		return user, err
 	}
-	if user.ID == 0 {
+	if user.Uuid == "" {
 		return user, errors.New("User Not Found on the Database")
 	}
 	return user, nil
@@ -105,31 +137,15 @@ func (s *services) GetUserByToken(token string) (User, error) {
 	if err != nil {
 		return user, err
 	}
-	if user.ID == 0 {
+	if user.Uuid == "" {
 		return user, errors.New("User Not Found on the Database")
 	}
 	return user, nil
 
 }
 
-func (s *services) SaveToken(ID int, token string) (User, error) {
-	user, err := s.repository.FindByIdAndUpdateToken(ID, token)
-	if err != nil {
-		return user, err
-	}
-
-	return user, nil
-}
-func (s *services) GetToken(ID int) (string, error) {
-	token, err := s.repository.FindByID(ID)
-	if err != nil {
-		return token.Token, err
-	}
-	return token.Token, nil
-}
-
-func (s *services) SaveUUID(ID int, generateUUID string) (User, error) {
-	user, err := s.repository.FindByIdAndUpdateUUID(ID, generateUUID)
+func (s *services) SaveToken(UUID string, token string) (User, error) {
+	user, err := s.repository.FindByIdAndUpdateToken(UUID, token)
 	if err != nil {
 		return user, err
 	}
