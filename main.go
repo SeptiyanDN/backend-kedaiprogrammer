@@ -45,18 +45,9 @@ func main() {
 
 	router := gin.New()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"https://cms.kedaiprogrammer.com","http://localhost:3000", "http://localhost:4173"},
+		AllowOrigins: []string{"*"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With", "*"},
-		AllowOriginFunc: func(origin string) bool {
-			allowedOrigins := []string{"https://cms.kedaiprogrammer.com"}
-			for _, allowedOrigin := range allowedOrigins {
-				if origin == allowedOrigin {
-					return true
-				}
-			}
-			return false
-		},
+		AllowHeaders: []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With", "*", "Accept-Language", "Accept-Encoding"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
