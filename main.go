@@ -43,22 +43,8 @@ func main() {
 	dbs := core.DBConnect()
 	defer dbs.Dbx.Close()
 
+
 	router := gin.New()
-	router.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		if c.Request.Method == "OPTIONS" {
-			c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
-			c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-			c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
-			c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-			c.AbortWithStatus(204)
-			return
-		}
-		c.Next()
-	})
   router.Use(cors.New(cors.Config{
     AllowOrigins:     []string{"https://cms.kedaiprogrammer.com"},
     AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -71,7 +57,6 @@ func main() {
     MaxAge: 12 * time.Hour,
   }))
 	
-	// Your routes here
 	router.Use(gin.Recovery())
 	Routing(router, dbs, initGorm)
 	fmt.Println("🚀 Server Backend Successfully Running on port : " + viper.GetString("server.port"))
@@ -86,7 +71,17 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 			"Message": "Welcome to " + viper.GetString("appName"),
 		})
 	})
-
+	// router.Use(func(c *gin.Context) {
+	// 	c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
+	// 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+	// 	if c.Request.Method == "OPTIONS" {
+	// 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	// 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+	// 		c.AbortWithStatus(204)
+	// 		return
+	// 	}
+	// 	c.Next()
+	// })
 	// repository
 	userRepository := users.NewRepository(initGorm)
 	businessRepository := businesses.NewRepository(initGorm)
