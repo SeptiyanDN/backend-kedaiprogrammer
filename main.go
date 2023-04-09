@@ -49,7 +49,7 @@ func main() {
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With", "*"},
 		AllowOriginFunc: func(origin string) bool {
-			allowedOrigins := []string{"http://localhost:3000", "https://septiyan.my.id"}
+			allowedOrigins := []string{"http://localhost:3000", "https://cms.kedaiprogrammer.com"}
 			for _, allowedOrigin := range allowedOrigins {
 				if origin == allowedOrigin {
 					return true
