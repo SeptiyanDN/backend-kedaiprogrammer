@@ -51,11 +51,10 @@ func main() {
     ExposeHeaders:    []string{"Content-Length"},
     AllowCredentials: true,
     AllowOriginFunc: func(origin string) bool {
-      return origin == "https://github.com"
+      return origin == "https://cms.kedaiprogrammer.com"
     },
     MaxAge: 12 * time.Hour,
   }))
-    router.Use(cors.New(config))
 	
 	// Your routes here
 	router.Use(gin.Recovery())
