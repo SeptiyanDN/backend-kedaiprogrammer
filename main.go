@@ -38,12 +38,14 @@ func main() {
 	}
 	initGorm.AutoMigrate(users.User{})
 	initGorm.AutoMigrate(businesses.Business{})
+	initGorm.AutoMigrate(categories.Category{})
+	initGorm.AutoMigrate(services.Service{})
 	dbs := core.DBConnect()
 	defer dbs.Dbx.Close()
 
 	router := gin.New()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost:3000", "https://septiyan.my.id", "http://localhost:3001", "http://localhost:4173", "*"},
+		AllowOrigins: []string{"http://localhost:3000", "https://cms.kedaiprogrammer.com", "http://localhost:4173"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With", "*"},
 		AllowOriginFunc: func(origin string) bool {
