@@ -45,24 +45,15 @@ func main() {
 
 	router := gin.New()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"https://cms.kedaiprogrammer.com"},
-		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Authorization", "Content-Type", "X-Requested-With", "*", "Accept-Language", "Accept-Encoding"},
-		ExposeHeaders: []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:        12 * time.Hour,
-	}))
-	router.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		if c.Request.Method == "OPTIONS" {
-			c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-			c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
-			c.AbortWithStatus(204)
-			return
-		}
-		c.Next()
-	})
+		config := cors.DefaultConfig()
+    config.AllowOrigins = []string{"https://cms.kedaiprogrammer.com"}
+    config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+    config.AllowHeaders = []string{"Authorization", "Content-Type", "X-Requested-With", "Accept-Language", "Accept-Encoding"}
+    config.ExposeHeaders = []string{"Content-Length"}
+    config.AllowCredentials = true
+    config.MaxAge = 12 * time.Hour
+
+    router.Use(cors.New(config))
 	
 	// Your routes here
 	router.Use(gin.Recovery())
