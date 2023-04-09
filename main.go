@@ -49,6 +49,7 @@ func main() {
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Authorization", "Content-Type", "X-Requested-With", "*", "Accept-Language", "Accept-Encoding"},
 		ExposeHeaders: []string{"Content-Length"},
+		AllowCredentials: true,
 		MaxAge:        12 * time.Hour,
 	}))
 	router.Use(func(c *gin.Context) {
