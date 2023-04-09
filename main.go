@@ -44,6 +44,21 @@ func main() {
 	defer dbs.Dbx.Close()
 
 	router := gin.New()
+	router.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		if c.Request.Method == "OPTIONS" {
+			c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
+			c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type
+			c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	})
   router.Use(cors.New(cors.Config{
     AllowOrigins:     []string{"https://cms.kedaiprogrammer.com"},
     AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
