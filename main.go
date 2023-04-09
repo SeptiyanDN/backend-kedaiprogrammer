@@ -44,14 +44,16 @@ func main() {
 	defer dbs.Dbx.Close()
 
 	router := gin.New()
-	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With", "*", "Accept-Language", "Accept-Encoding"},
-		ExposeHeaders:    []string{"Content-Length"},
+	corsMiddleware := cors.New(cors.Options{
+		AllowedOrigins: []string{"https://cms.kedaiprogrammer.com", "http://localhost:3000", "http://localhost:4173"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders: []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With", "*", "Accept-Language", "Accept-Encoding"},
+		ExposedHeaders: []string{"Content-Length"},
 		AllowCredentials: true,
-		MaxAge:           12 * time.Hour,
-	}))
+		Debug: true,
+		OptionsPassthrough:true,
+		MaxAge: 12 * time.Hour,
+	})
 	router.Use(gin.Recovery())
 	Routing(router, dbs, initGorm)
 	fmt.Println("🚀 Server Backend Successfully Running on port : " + viper.GetString("server.port"))
