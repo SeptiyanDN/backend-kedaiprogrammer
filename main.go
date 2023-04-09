@@ -45,14 +45,11 @@ func main() {
 
 	router := gin.New()
 	router.Use(cors.New(cors.Config{
-		AllowedOrigins: []string{"https://cms.kedaiprogrammer.com", "http://localhost:3000", "http://localhost:4173"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders: []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With", "*", "Accept-Language", "Accept-Encoding"},
-		ExposedHeaders: []string{"Content-Length"},
-		AllowCredentials: true,
-		Debug: true,
-		OptionsPassthrough:true,
-		MaxAge: 12 * time.Hour,
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With", "*", "Accept-Language", "Accept-Encoding"},
+		ExposeHeaders:    []string{"Content-Length"},
+		MaxAge:           12 * time.Hour,
 	}))
 	router.Use(gin.Recovery())
 	Routing(router, dbs, initGorm)
