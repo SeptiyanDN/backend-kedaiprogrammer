@@ -71,17 +71,17 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 			"Message": "Welcome to " + viper.GetString("appName"),
 		})
 	})
-	// router.Use(func(c *gin.Context) {
-	// 	c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
-	// 	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-	// 	if c.Request.Method == "OPTIONS" {
-	// 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-	// 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
-	// 		c.AbortWithStatus(204)
-	// 		return
-	// 	}
-	// 	c.Next()
-	// })
+	router.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		if c.Request.Method == "OPTIONS" {
+			c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+			c.AbortWithStatus(204)
+			return
+		}
+		c.Next()
+	})
 	// repository
 	userRepository := users.NewRepository(initGorm)
 	businessRepository := businesses.NewRepository(initGorm)
