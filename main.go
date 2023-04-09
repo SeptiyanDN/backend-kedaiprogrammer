@@ -45,7 +45,7 @@ func main() {
 
 	router := gin.New()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
+		AllowOrigins: []string{"https://cms.kedaiprogrammer.com"},
 		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{"Authorization", "Content-Type", "X-Requested-With", "*", "Accept-Language", "Accept-Encoding"},
 		ExposeHeaders: []string{"Content-Length"},
