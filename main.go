@@ -44,24 +44,26 @@ func main() {
 	defer dbs.Dbx.Close()
 
 	router := gin.New()
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Authorization", "Content-Type", "X-Requested-With", "*", "Accept-Language", "Accept-Encoding"},
+		ExposeHeaders: []string{"Content-Length"},
+		MaxAge:        12 * time.Hour,
+	}))
 	router.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		if c.Request.Method == "OPTIONS" {
+			c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
 			c.AbortWithStatus(204)
 			return
 		}
 		c.Next()
 	})
-	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "X-Requested-With", "*", "Accept-Language", "Accept-Encoding"},
-		ExposeHeaders:    []string{"Content-Length"},
-		MaxAge:           12 * time.Hour,
-	}))
+	
+	// Your routes here
 	router.Use(gin.Recovery())
 	Routing(router, dbs, initGorm)
 	fmt.Println("🚀 Server Backend Successfully Running on port : " + viper.GetString("server.port"))
