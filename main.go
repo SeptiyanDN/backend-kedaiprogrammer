@@ -44,15 +44,25 @@ func main() {
 	defer dbs.Dbx.Close()
 
 	router := gin.New()
-	router.Use(cors.New(cors.Config{
-		config := cors.DefaultConfig()
-    config.AllowOrigins = []string{"https://cms.kedaiprogrammer.com"}
-    config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-    config.AllowHeaders = []string{"Authorization", "Content-Type", "X-Requested-With", "Accept-Language", "Accept-Encoding"}
-    config.ExposeHeaders = []string{"Content-Length"}
-    config.AllowCredentials = true
-    config.MaxAge = 12 * time.Hour
-
+	
+	config := cors.DefaultConfig()
+	    config.AllowOrigins = []string{"https://cms.kedaiprogrammer.com"}
+	    config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	    config.AllowHeaders = []string{"Authorization", "Content-Type", "X-Requested-With", "Accept-Language", "Accept-Encoding","Origin"}
+	    config.ExposeHeaders = []string{"Content-Length"}
+	    config.AllowCredentials = true
+	    config.MaxAge = 12 * time.Hour
+//   router.Use(cors.New(cors.Config{
+//     AllowOrigins:     []string{"https://foo.com"},
+//     AllowMethods:     []string{"PUT", "PATCH"},
+//     AllowHeaders:     []string{"Origin"},
+//     ExposeHeaders:    []string{"Content-Length"},
+//     AllowCredentials: true,
+//     AllowOriginFunc: func(origin string) bool {
+//       return origin == "https://github.com"
+//     },
+//     MaxAge: 12 * time.Hour,
+//   }))
     router.Use(cors.New(config))
 	
 	// Your routes here
