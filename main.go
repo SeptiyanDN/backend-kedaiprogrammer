@@ -47,7 +47,7 @@ func main() {
   router.Use(cors.New(cors.Config{
     AllowOrigins:     []string{"https://cms.kedaiprogrammer.com"},
     AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-    AllowHeaders:     []string{"Authorization", "Content-Type", "X-Requested-With", "Accept-Language", "Accept-Encoding","Origin"},
+    AllowHeaders:     []string{"Access-Control-Allow-Origin","Authorization", "Content-Type", "X-Requested-With", "Accept-Language", "Accept-Encoding","Origin"},
     ExposeHeaders:    []string{"Content-Length"},
     AllowCredentials: true,
     AllowOriginFunc: func(origin string) bool {
