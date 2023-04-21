@@ -22,7 +22,7 @@ func (s *services) SaveCategory(input AddCategoryInput) (Category, error) {
 	category := Category{}
 	category.CategoryID = helpers.GenerateUUID()
 	category.CategoryName = input.Category_name
-	category.Slug = input.Slug
+	category.Tag = input.Tag
 	category.IsActive = true
 	category.ServiceID = input.ServiceID
 	newCategory, err := s.repository.Save(category)

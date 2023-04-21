@@ -35,10 +35,11 @@
         "SESSIONS_STORE" : "SMARTPATROL"
     },
     "S3_CREDENTIALS" :{
-        "BUCKET" : "staging-smartpatrol",
+        "BUCKET" : "kedaiedukasi",
         "URL" :"is3.cloudhost.id",
-        "ACCESS_ID":"1DEX1YGLABAD4OCM8M43",
-        "SECRET_KEY" :"BckVxDudmAQGS2Lrx7sSxmv9BjwmGX3KAzo6nQtx",
+        "RESP_URL" : "https://is3.cloudhost.id",
+        "ACCESS_ID":"L423F7LNTOK5UF0ES6IL",
+        "SECRET_KEY" :"hiliV84eZfAI7xFmayLj6GyJR2k805ZuMic8ZWB4",
         "REGION" :"id-jkt-1"
     },
     "THIRD_PARTY" : {

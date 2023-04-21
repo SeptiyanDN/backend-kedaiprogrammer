@@ -8,6 +8,7 @@ import (
 	"kedaiprogrammer/helper"
 	"kedaiprogrammer/helpers"
 	"kedaiprogrammer/kedaihelpers"
+	"kedaiprogrammer/master/articles"
 	"kedaiprogrammer/master/businesses"
 	"kedaiprogrammer/master/categories"
 	"kedaiprogrammer/master/services"
@@ -32,45 +33,57 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	tmphttpreadheadertimeout, _ := time.ParseDuration(viper.GetString("server.readheadertimeout") + "s")
+	tmphttpreadtimeout, _ := time.ParseDuration(viper.GetString("server.readtimeout") + "s")
+	tmphttpwritetimeout, _ := time.ParseDuration(viper.GetString("server.writetimeout") + "s")
+	tmphttpidletimeout, _ := time.ParseDuration(viper.GetString("server.idletimeout") + "s")
 	initGorm, err := core.InitGorm()
+	router := gin.New()
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	initGorm.AutoMigrate(users.User{})
-	initGorm.AutoMigrate(businesses.Business{})
-	initGorm.AutoMigrate(categories.Category{})
-	initGorm.AutoMigrate(services.Service{})
+	// initGorm.AutoMigrate(users.User{})
+	// initGorm.AutoMigrate(businesses.Business{})
+	// initGorm.AutoMigrate(categories.Category{})
+	// initGorm.AutoMigrate(services.Service{})
+	// initGorm.AutoMigrate(articles.Article{})
 	dbs := core.DBConnect()
 	defer dbs.Dbx.Close()
 
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "http://localhost:3000"
+		},
+		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "x-requested-with"},
+		ExposeHeaders:    []string{"Content-Length"},
+		MaxAge:           12 * time.Hour,
+		AllowCredentials: true, // Tambahkan opsi ini
+	}))
 
-	router := gin.New()
-  router.Use(cors.New(cors.Config{
-    AllowOrigins:     []string{"https://cms.kedaiprogrammer.com"},
-    AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-    AllowHeaders:     []string{"Access-Control-Allow-Origin","Authorization", "Content-Type", "X-Requested-With", "Accept-Language", "Accept-Encoding","Origin"},
-    ExposeHeaders:    []string{"Content-Length"},
-    AllowCredentials: true,
-    AllowOriginFunc: func(origin string) bool {
-      return origin == "https://cms.kedaiprogrammer.com"
-    },
-    MaxAge: 12 * time.Hour,
-  }))
-  router.Use(func(c *gin.Context) {
-	c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
-	c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-	if c.Request.Method == "OPTIONS" {
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
-		c.AbortWithStatus(204)
-		return
-	}
-	c.Next()
-})
 	router.Use(gin.Recovery())
+	router.Use(func(c *gin.Context) {
+		c.Next()
+	})
+	S3 := core.ConnectAws()
+	router.Use(func(c *gin.Context) {
+		c.Set("S3", S3)
+		c.Next()
+	})
 	Routing(router, dbs, initGorm)
-	fmt.Println("🚀 Server Backend Successfully Running on port : " + viper.GetString("server.port"))
-	router.Run(":" + viper.GetString("server.port"))
+
+	s := &http.Server{
+		Addr:              ":" + viper.GetString("server.port"),
+		Handler:           router,
+		ReadHeaderTimeout: tmphttpreadheadertimeout,
+		ReadTimeout:       tmphttpreadtimeout,
+		WriteTimeout:      tmphttpwritetimeout,
+		IdleTimeout:       tmphttpidletimeout,
+		//MaxHeaderBytes:    1 << 20,
+	}
+	fmt.Println("🚀 Server running on port:", viper.GetString("server.port"))
+	s.ListenAndServe()
 }
 func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	time.Local = time.UTC
@@ -87,12 +100,14 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	businessRepository := businesses.NewRepository(initGorm)
 	serviceRepository := services.NewRepository(initGorm, dbs)
 	categoryRepository := categories.NewRepository(initGorm, dbs)
+	articleRepository := articles.NewRepository(initGorm, dbs)
 
 	// services
 	userServices := users.NewServices(userRepository)
 	businessServices := businesses.NewServices(businessRepository)
 	serviceServices := services.NewServices(serviceRepository)
 	categoryServices := categories.NewServices(categoryRepository)
+	articleServices := articles.NewServices(articleRepository)
 	authServices := authorization.NewServices()
 
 	// handler
@@ -100,6 +115,7 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	businessHandler := handler.NewBusinessHandler(businessServices)
 	serviceHandler := handler.NewServiceHandler(serviceServices)
 	categoryHandler := handler.NewCategoryHandler(categoryServices)
+	articleHandler := handler.NewArticleHandler(articleServices)
 
 	versioning := router.Group("/api/v1")
 
@@ -124,10 +140,17 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	}
 	categoryRouter := versioning.Group("categories")
 	{
-		categoryRouter.Use(authMiddleware(authServices, userServices))
 		categoryRouter.POST("/", categoryHandler.SaveCategory)
 		categoryRouter.GET("/list", categoryHandler.GetAllCategory)
+		categoryRouter.Use(authMiddleware(authServices, userServices))
 		categoryRouter.GET("/:id", categoryHandler.GetDetailCategory)
+	}
+	articleRouter := versioning.Group("articles")
+	{
+		articleRouter.GET("/list", articleHandler.GetAll)
+		articleRouter.GET("/:article_id", articleHandler.GetDetailArticle)
+		articleRouter.Use(authMiddleware(authServices, userServices))
+		articleRouter.POST("/", articleHandler.CreateData)
 	}
 	domainRouter := versioning.Group("domain")
 	{

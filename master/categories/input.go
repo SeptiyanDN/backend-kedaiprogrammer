@@ -6,7 +6,7 @@ type FindCategoryInput struct {
 type AddCategoryInput struct {
 	Category_name string `form:"category_name" binding:"required" json:"category_name"`
 	ServiceID     string `form:"service_id" binding:"required" json:"service_id"`
-	Slug          string `form:"slug" binding:"required" json:"slug"`
+	Tag           string `form:"tag" binding:"required" json:"tag"`
 }
 
 type BodyGetRequest struct {

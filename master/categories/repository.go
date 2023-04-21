@@ -37,7 +37,7 @@ func (r *repository) GetCategory(id string) (map[string]interface{}, error) {
 	sql := `Select 
 				a.category_id,
 				a.category_name,
-				a.slug,
+				a.tag,
 				a.is_active,
 				b.service_name,
 				c.business_name
@@ -57,7 +57,12 @@ func (r *repository) GetAllWithCounts(search string, limit, offset int, OrderCol
 	offsets := (offset - 1) * limit
 
 	queryOrder := `ORDER BY ` + cast.ToString(OrderColumn) + ` ` + cast.ToString(orderDirection)
-	queryLimit := `LIMIT ` + cast.ToString(limit) + ` OFFSET ` + cast.ToString(offsets)
+	queryLimit := ``
+
+	if limit != 5 {
+		queryLimit += ` LIMIT ` + cast.ToString(limit) + ` OFFSET ` + cast.ToString(offsets)
+
+	}
 
 	queryWhere := `WHERE a.is_active = true`
 	if search != "" {
@@ -70,16 +75,11 @@ func (r *repository) GetAllWithCounts(search string, limit, offset int, OrderCol
 	sql := `SELECT 
 				a.category_id,
 				a.category_name,
-				a.slug,
+				a.tag,
 				a.is_active,
 				b.service_name,
 				c.business_name,
-				(
-					SELECT 
-						COUNT(a2.*)  
-					FROM categories a2 
-					WHERE a2.is_active = true
-				) AS total
+				count(*) OVER() AS total
 			FROM categories as a
 			LEFT JOIN services as b on b.service_id = a.service_id
 			LEFT JOIN businesses as c on c.business_id = b.business_id
@@ -89,7 +89,7 @@ func (r *repository) GetAllWithCounts(search string, limit, offset int, OrderCol
 
 	rows := r.dbs.DatabaseQueryRows(sql)
 	if len(rows) < 1 {
-		return nil, 0, 0, nil
+		return []map[string]interface{}{}, 0, 0, nil
 	}
 	return rows, cast.ToInt(rows[0]["total"]), len(rows), nil
 }
