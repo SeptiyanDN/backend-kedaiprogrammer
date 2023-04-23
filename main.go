@@ -45,7 +45,15 @@ func main() {
 	dbs := core.DBConnect()
 	defer dbs.Dbx.Close()
 
-	router.Use(cors.Default())
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"https://cms.kedaiprogrammer.com", "https://edukasi.kedaiprogrammer.com", "http://localhost:3000"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "x-requested-with"},
+		ExposeHeaders:    []string{"Content-Length"},
+		MaxAge:           12 * time.Hour,
+		AllowCredentials: true, // Tambahkan opsi ini
+	}))
+
 	router.Use(gin.Recovery())
 	router.Use(func(c *gin.Context) {
 		c.Next()
@@ -69,20 +77,6 @@ func main() {
 
 	fmt.Println("🚀 Server running on port:", viper.GetString("server.port"))
 	s.ListenAndServe()
-}
-
-func addCorsHeader() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(http.StatusOK)
-			return
-		}
-		c.Next()
-	}
 }
 
 func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
@@ -149,7 +143,7 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	{
 		articleRouter.GET("/list", articleHandler.GetAll)
 		articleRouter.GET("/:article_id", articleHandler.GetDetailArticle)
-		articleRouter.Use(authMiddleware(authServices, userServices))
+		// articleRouter.Use(authMiddleware(authServices, userServices))
 		articleRouter.POST("/", articleHandler.CreateData)
 	}
 	domainRouter := versioning.Group("domain")
