@@ -45,15 +45,7 @@ func main() {
 	dbs := core.DBConnect()
 	defer dbs.Dbx.Close()
 
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://cms.kedaiprogrammer.com", "https://edukasi.kedaiprogrammer.com", "http://localhost:3000"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "x-requested-with"},
-		ExposeHeaders:    []string{"Content-Length"},
-		MaxAge:           12 * time.Hour,
-		AllowCredentials: true, // Tambahkan opsi ini
-	}))
-
+	router.Use(cors.Default())
 	router.Use(gin.Recovery())
 	router.Use(func(c *gin.Context) {
 		c.Next()
@@ -74,9 +66,6 @@ func main() {
 		IdleTimeout:       tmphttpidletimeout,
 		//MaxHeaderBytes:    1 << 20,
 	}
-
-	// Menambahkan middleware untuk mengubah method POST menjadi OPTIONS
-	router.Use(addCorsHeader())
 
 	fmt.Println("🚀 Server running on port:", viper.GetString("server.port"))
 	s.ListenAndServe()
