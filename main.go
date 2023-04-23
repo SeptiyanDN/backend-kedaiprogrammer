@@ -52,7 +52,7 @@ func main() {
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "x-requested-with"},
 		ExposeHeaders:    []string{"Content-Length"},
 		MaxAge:           12 * time.Hour,
