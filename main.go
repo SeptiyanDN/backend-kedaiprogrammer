@@ -76,15 +76,24 @@ func main() {
 	}
 
 	// Menambahkan middleware untuk mengubah method POST menjadi OPTIONS
-	router.Use(func(c *gin.Context) {
-		if c.Request.Method == http.MethodPost {
-			c.Request.Method = http.MethodOptions
-		}
-		c.Next()
-	})
+	router.Use(addCorsHeader())
 
 	fmt.Println("🚀 Server running on port:", viper.GetString("server.port"))
 	s.ListenAndServe()
+}
+
+func addCorsHeader() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "https://cms.kedaiprogrammer.com")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Authorization, Content-Type")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusOK)
+			return
+		}
+		c.Next()
+	}
 }
 
 func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
