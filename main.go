@@ -42,16 +42,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
-	// initGorm.AutoMigrate(users.User{})
-	// initGorm.AutoMigrate(businesses.Business{})
-	// initGorm.AutoMigrate(categories.Category{})
-	// initGorm.AutoMigrate(services.Service{})
-	// initGorm.AutoMigrate(articles.Article{})
 	dbs := core.DBConnect()
 	defer dbs.Dbx.Close()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins:     []string{"https://cms.kedaiprogrammer.com", "https://edukasi.kedaiprogrammer.com", "http://localhost:3000"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "x-requested-with"},
 		ExposeHeaders:    []string{"Content-Length"},
