@@ -74,9 +74,19 @@ func main() {
 		IdleTimeout:       tmphttpidletimeout,
 		//MaxHeaderBytes:    1 << 20,
 	}
+
+	// Menambahkan middleware untuk mengubah method POST menjadi OPTIONS
+	router.Use(func(c *gin.Context) {
+		if c.Request.Method == http.MethodPost {
+			c.Request.Method = http.MethodOptions
+		}
+		c.Next()
+	})
+
 	fmt.Println("🚀 Server running on port:", viper.GetString("server.port"))
 	s.ListenAndServe()
 }
+
 func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	time.Local = time.UTC
 	router.Static("/logo-path", viper.GetString("upload_path.logo"))
