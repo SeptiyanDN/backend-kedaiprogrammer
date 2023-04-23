@@ -127,7 +127,7 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	}
 	serviceRouter := versioning.Group("services")
 	{
-		serviceRouter.Use(authMiddleware(authServices, userServices))
+		// serviceRouter.Use(authMiddleware(authServices, userServices))
 		serviceRouter.POST("/", serviceHandler.SaveService)
 		serviceRouter.GET("/list", serviceHandler.GetAllServices)
 		serviceRouter.GET("/:id", serviceHandler.GetDetailService)
