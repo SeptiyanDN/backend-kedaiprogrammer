@@ -7,6 +7,7 @@ import (
 	"kedaiprogrammer/handler"
 	"kedaiprogrammer/helper"
 	"kedaiprogrammer/helpers"
+	"kedaiprogrammer/kedaihelpers"
 	"kedaiprogrammer/master/articles"
 	"kedaiprogrammer/master/businesses"
 	"kedaiprogrammer/master/categories"
@@ -20,6 +21,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -31,8 +33,12 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	tmphttpreadheadertimeout, _ := time.ParseDuration(viper.GetString("server.readheadertimeout") + "s")
+	tmphttpreadtimeout, _ := time.ParseDuration(viper.GetString("server.readtimeout") + "s")
+	tmphttpwritetimeout, _ := time.ParseDuration(viper.GetString("server.writetimeout") + "s")
+	tmphttpidletimeout, _ := time.ParseDuration(viper.GetString("server.idletimeout") + "s")
 	initGorm, err := core.InitGorm()
-	router := gin.Default()
+	router := gin.New()
 	if err != nil {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
@@ -57,6 +63,34 @@ func main() {
 		c.Set("S3", S3)
 		c.Next()
 	})
+	Routing(router, dbs, initGorm)
+
+	router.Run(":" + viper.GetString("server.port"))
+
+	s := &http.Server{
+		Addr:              ":" + viper.GetString("server.port"),
+		Handler:           router,
+		ReadHeaderTimeout: tmphttpreadheadertimeout,
+		ReadTimeout:       tmphttpreadtimeout,
+		WriteTimeout:      tmphttpwritetimeout,
+		IdleTimeout:       tmphttpidletimeout,
+		//MaxHeaderBytes:    1 << 20,
+	}
+
+	fmt.Println("🚀 Server running on port:", viper.GetString("server.port"))
+	s.ListenAndServe()
+}
+
+func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
+	time.Local = time.UTC
+	router.Static("/logo-path", viper.GetString("upload_path.logo"))
+	router.Any("", func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{
+			"status":  "OK",
+			"Message": "Welcome to " + viper.GetString("appName"),
+		})
+	})
+
 	// repository
 	userRepository := users.NewRepository(initGorm)
 	businessRepository := businesses.NewRepository(initGorm)
@@ -124,9 +158,6 @@ func main() {
 		domainRouter.GET("/new/:keyword", func(ctx *gin.Context) { handler.NewPrice(ctx) })
 
 	}
-	fmt.Println("🚀 Server running on port:", viper.GetString("server.port"))
-	router.Run(":" + viper.GetString("server.port"))
-
 }
 
 func authMiddleware(authServices authorization.Services, userServices users.Services) gin.HandlerFunc {
