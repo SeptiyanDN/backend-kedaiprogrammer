@@ -46,7 +46,7 @@ func main() {
 	defer dbs.Dbx.Close()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://cms.kedaiprogrammer.com", "https://edukasi.kedaiprogrammer.com", "http://localhost:3000"},
+		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "x-requested-with"},
 		ExposeHeaders:    []string{"Content-Length"},
@@ -127,7 +127,7 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	}
 	serviceRouter := versioning.Group("services")
 	{
-		// serviceRouter.Use(authMiddleware(authServices, userServices))
+		serviceRouter.Use(authMiddleware(authServices, userServices))
 		serviceRouter.POST("/", serviceHandler.SaveService)
 		serviceRouter.GET("/list", serviceHandler.GetAllServices)
 		serviceRouter.GET("/:id", serviceHandler.GetDetailService)
@@ -143,7 +143,7 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	{
 		articleRouter.GET("/list", articleHandler.GetAll)
 		articleRouter.GET("/:article_id", articleHandler.GetDetailArticle)
-		// articleRouter.Use(authMiddleware(authServices, userServices))
+		articleRouter.Use(authMiddleware(authServices, userServices))
 		articleRouter.POST("/", articleHandler.CreateData)
 	}
 	domainRouter := versioning.Group("domain")
