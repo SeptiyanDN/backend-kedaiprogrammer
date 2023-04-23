@@ -27,14 +27,11 @@ func (h *serviceHandler) SaveService(c *gin.Context) {
 		return
 	}
 
-	newService, err := h.serviceServices.Save(input)
-	if err != nil {
-		response := helper.APIResponse("Create New Services Failed", http.StatusBadRequest, "error", nil)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
-	response := helper.APIResponse("Create Service Success", http.StatusOK, "success", newService)
-	c.JSON(http.StatusOK, response)
+	h.serviceServices.Save(input)
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Service saved successfully",
+	})
 }
 
 func (h *serviceHandler) GetAllServices(c *gin.Context) {
