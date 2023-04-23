@@ -40,8 +40,8 @@ func (r *repository) GetAllWithCounts(search string, limit, offset int, OrderCol
 		queryWhere += ` AND
 		(
 			a.title LIKE '%` + search + `%' OR
-			a.description LIKE '%` + search + `% OR
-			a.body LIKE '%` + search + `%
+			a.description LIKE '%` + search + `%' OR
+			a.body LIKE '%` + search + `%'
 		)`
 	}
 
@@ -59,14 +59,12 @@ func (r *repository) GetAllWithCounts(search string, limit, offset int, OrderCol
 				b.tag,
 				c.username as author_name,
 				count(*) OVER() AS total
-
 			FROM articles as a
 			LEFT JOIN categories as b on b.category_id = a.category_id
 			LEFT JOIN users as c on c.uuid = a.author_id
 
 			` + queryWhere + ` 
 			` + queryOrder + ` ` + queryLimit
-
 	rows := r.dbs.DatabaseQueryRows(sql)
 	if len(rows) < 1 {
 		return []map[string]interface{}{}, 0, 0, nil
