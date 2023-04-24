@@ -49,9 +49,9 @@ func main() {
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "x-requested-with"},
-		ExposeHeaders:    []string{"Content-Length"},
+		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin"},
 		MaxAge:           12 * time.Hour,
-		AllowCredentials: true, // Tambahkan opsi ini
+		AllowCredentials: true,
 	}))
 
 	router.Use(gin.Recovery())
