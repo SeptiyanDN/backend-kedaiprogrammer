@@ -12,7 +12,7 @@ import (
 )
 
 type Services interface {
-	GetAll(search string, limit int, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error)
+	GetAll(tag, search string, limit int, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error)
 	Save(s3 *session.Session, request CreateRequest, uuid string) (Article, error)
 	GetOne(articleID string) (map[string]interface{}, error)
 }
@@ -24,8 +24,8 @@ type services struct {
 func NewServices(repository Repository) *services {
 	return &services{repository}
 }
-func (s *services) GetAll(search string, limit int, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error) {
-	return s.repository.GetAllWithCounts(search, limit, offset, OrderColumn, orderDirection)
+func (s *services) GetAll(tag, search string, limit int, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error) {
+	return s.repository.GetAllWithCounts(tag, search, limit, offset, OrderColumn, orderDirection)
 }
 func (s *services) GetOne(articleID string) (map[string]interface{}, error) {
 	return s.repository.GetOne(articleID)

@@ -52,12 +52,13 @@ func (h *articleHandler) CreateData(c *gin.Context) {
 
 func (h *articleHandler) GetAll(c *gin.Context) {
 	search := c.Query("search")
+	tag := c.Query("tag")
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "5"))
 	offset, _ := strconv.Atoi(c.DefaultQuery("offset", "1"))
 	orderColumn := c.DefaultQuery("order_column", "category_name")
 	orderDirection := c.DefaultQuery("order_direction", "asc")
 
-	data, countFiltered, countAll, err := h.services.GetAll(search, limit, offset, orderColumn, orderDirection)
+	data, countFiltered, countAll, err := h.services.GetAll(tag, search, limit, offset, orderColumn, orderDirection)
 	if err != nil {
 		response := helpers.APIResponse(err.Error(), http.StatusInternalServerError, "success", nil)
 		c.JSON(http.StatusInternalServerError, response)

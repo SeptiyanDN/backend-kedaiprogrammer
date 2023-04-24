@@ -9,7 +9,7 @@ import (
 )
 
 type Repository interface {
-	GetAllWithCounts(search string, limit, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error)
+	GetAllWithCounts(tag, search string, limit, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error)
 	Save(article Article) (Article, error)
 	GetOne(articleID string) (map[string]interface{}, error)
 }
@@ -23,7 +23,7 @@ func NewRepository(db *gorm.DB, dbs kedaihelpers.DBStruct) *repository {
 	return &repository{db, dbs}
 }
 
-func (r *repository) GetAllWithCounts(search string, limit, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error) {
+func (r *repository) GetAllWithCounts(tag, search string, limit, offset int, OrderColumn string, orderDirection string) ([]map[string]interface{}, int, int, error) {
 
 	offsets := (offset - 1) * limit
 
@@ -36,6 +36,9 @@ func (r *repository) GetAllWithCounts(search string, limit, offset int, OrderCol
 	}
 
 	queryWhere := `WHERE a.status = 1`
+	if tag != "" {
+		queryWhere += ` AND b.tag LIKE '%` + tag + `%' `
+	}
 	if search != "" {
 		queryWhere += ` AND
 		(
