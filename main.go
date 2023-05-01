@@ -46,14 +46,13 @@ func main() {
 	defer dbs.Dbx.Close()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://edukasi.kedaiprogrammer.com/", "https://cms.kedaiprogrammer.com/", "https://cms.kedaiprogrammer.com", "cms.kedaiprogrammer.com", "http://localhost:3501/", "http://localhost:3000/"},
+		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Access-Control-Allow-Origin", "Authorization", "Content-Type", "x-requested-with"},
 		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin"},
 		MaxAge:           12 * time.Hour,
 		AllowCredentials: true,
 	}))
-
 	router.Use(gin.Recovery())
 	router.Use(func(c *gin.Context) {
 		c.Next()
