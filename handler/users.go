@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"kedaiprogrammer/authorization"
 	"kedaiprogrammer/helper"
+	"kedaiprogrammer/helpers"
 	"kedaiprogrammer/users"
 	"net/http"
 
@@ -123,5 +124,27 @@ func (h *userHandler) Login(c *gin.Context) {
 	// formatter := users.FormatUserLogin(token)
 	response := helper.APIResponse("Login Successfully", http.StatusOK, "success", loggedinUser)
 	c.JSON(http.StatusOK, response)
-
+}
+func (h *userHandler) CheckUserLoggedIn(c *gin.Context) {
+	current := c.MustGet("current").(*authorization.JWTClaim)
+	uuid, err := helpers.Decrypt(current.Uuid)
+	if err != nil {
+		response := helper.APIResponse("Failed To Login! User UnAuthorized", http.StatusUnauthorized, "success", "Failed")
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+	fmt.Println(uuid)
+	if uuid == "" {
+		response := helper.APIResponse("Failed To Login! User UnAuthorized", http.StatusUnauthorized, "success", "Failed")
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+	data, err := h.userServices.CheckLoggedIN(current.Username)
+	if err != nil {
+		response := helper.APIResponse("Failed To Login! User UnAuthorized", http.StatusUnauthorized, "success", "Failed")
+		c.JSON(http.StatusUnauthorized, response)
+		return
+	}
+	response := helper.APIResponse("Success To Check Logged In Status", http.StatusOK, "success", data)
+	c.JSON(http.StatusOK, response)
 }

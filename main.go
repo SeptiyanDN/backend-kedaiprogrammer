@@ -115,6 +115,8 @@ func Routing(router *gin.Engine, dbs kedaihelpers.DBStruct, initGorm *gorm.DB) {
 	{
 		authRouter.POST("login", userHandler.Login)
 		authRouter.POST("/register", userHandler.RegisterUser)
+		authRouter.Use(authMiddleware(authServices, userServices))
+		authRouter.GET("/check-login", userHandler.CheckUserLoggedIn)
 
 	}
 	businessRouter := versioning.Group("business")

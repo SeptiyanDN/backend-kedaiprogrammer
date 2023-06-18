@@ -21,6 +21,7 @@ type Services interface {
 	GetUserByUUID(UUID string) (User, error)
 	GetUserByToken(token string) (User, error)
 	SaveToken(UUID string, token string) (User, error)
+	CheckLoggedIN(username string) (User, error)
 }
 
 type services struct {
@@ -93,6 +94,10 @@ func (s *services) Login(input LoginInput) (User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *services) CheckLoggedIN(username string) (User, error) {
+	return s.repository.FindByUsername(username)
 }
 
 func (s *services) IsEmailAvailable(input CheckEmailInput) (bool, error) {
