@@ -120,8 +120,8 @@ func (h *userHandler) Login(c *gin.Context) {
 		}
 	}
 
-	formatter := users.FormatUserLogin(token)
-	response := helper.APIResponse("Login Successfully", http.StatusOK, "success", formatter)
+	// formatter := users.FormatUserLogin(token)
+	response := helper.APIResponse("Login Successfully", http.StatusOK, "success", loggedinUser)
 	c.JSON(http.StatusOK, response)
 
 }
